@@ -1,0 +1,20 @@
+[
+    {
+      "specialization": "Orthopedics",
+      "name": "Firhan",
+      "gender": "Male",
+      "phone": "124124",
+      "email": "firhan@email.com",
+      "dob": "2023-07-14",
+      "id": "N866EU"
+    },
+    {
+      "specialization": "Orthopedics",
+      "name": "wayan",
+      "gender": "Male",
+      "phone": "123124",
+      "email": "wayan@email.com",
+      "dob": "2023-07-14",
+      "id": "HNDYAV"
+    }
+  ]

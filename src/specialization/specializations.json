@@ -1,0 +1,17 @@
+[
+    {"id":"1","specialization":"Orthopedics"},
+    {"id":"2","specialization":"Internal Medicine"},
+    {"id":"3","specialization":"Obstetrics and Gynecology"},
+    {"id":"4","specialization":"Dermatology"},
+    {"id":"5","specialization":"Pediatrics"},
+    {"id":"6","specialization":"Radiology"},
+    {"id":"7","specialization":"General Surgery"},
+    {"id":"8","specialization":"Ophthalmology"},
+    {"id":"9","specialization":"Anesthesia"},
+    {"id":"10","specialization":"Pathology"},
+    {"id":"11","specialization":"ENT"},
+    {"id":"12","specialization":"Dental Care"},
+    {"id":"13","specialization":"Dermatologists"},
+    {"id":"14","specialization":"Endocrinologists"},
+    {"id":"15","specialization":"Neurologists"}
+]
