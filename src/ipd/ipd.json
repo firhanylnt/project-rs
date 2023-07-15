@@ -1,0 +1,16 @@
+[
+    {
+      "patient": "Firhan Yulianto",
+      "type": "VVIP",
+      "date": "2023-07-15T15:04",
+      "room": "001",
+      "payment": "Asuransi",
+      "symptoms": "tidak ada",
+      "notes": "tidak ada",
+      "height": "62",
+      "weight": "171",
+      "pressure": "120/70",
+      "id": "7Z3YMS",
+      "status": "active"
+    }
+  ]

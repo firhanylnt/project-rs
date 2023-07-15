@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { readFileSync, writeFileSync } from 'fs';
 
 @Injectable()
-export class AuthService {
-  private filePath = __dirname + '/auth/auth.json';
+export class UsersService {
+  private filePath = __dirname + '/users/users.json';
 
   private getData(): any[] {
     const jsonData = readFileSync(this.filePath, 'utf-8');

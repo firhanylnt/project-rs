@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { CreateBedroomDto } from './dto/create-bedroom.dto';
+import { UpdateBedroomDto } from './dto/update-bedroom.dto';
 import { readFileSync, writeFileSync } from 'fs';
 
 @Injectable()
-export class AuthService {
-  private filePath = __dirname + '/auth/auth.json';
+export class BedroomService {
+  private filePath = __dirname + '/bedroom/bedroom.json';
 
   private getData(): any[] {
     const jsonData = readFileSync(this.filePath, 'utf-8');
@@ -32,6 +32,12 @@ export class AuthService {
     const jsonData = this.getData();
     const item = jsonData.find((item) => item.id === id);
     return item ? item : 'Item not found';
+  }
+
+  findRoom(id: string) {
+    const jsonData = this.getData();
+    const item = jsonData.filter((item) => item.type === id);
+    return item.length > 0 ? item : 'Item not found';
   }
 
   update(id: string, updatedData) {
