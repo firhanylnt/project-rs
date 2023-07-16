@@ -23,6 +23,34 @@ export class AuthService {
     this.saveData(existingData);
   }
 
+  login(data): object {
+    let res = {success: true, error: null, data: null}
+
+    if (data.email == null || data.password == null) {
+      res.success = false
+      res.error = 'Email atau password tidak boleh kosong.'
+      return res
+    }
+
+    const jsonData = this.getData();
+    const user = jsonData.find((item) => item.email === data.email);
+
+    if (user == null) {
+      res.success = false
+      res.error = 'Akun tidak ditemukan.'
+      return res
+    } else {
+      if (user.password != data.password) {
+        res.success = false
+        res.error = 'Password tidak sesuai.'
+        return res
+      }
+
+      res.data = user
+      return res
+    }
+  }
+
   findAll() {
     const jsonData = this.getData();
     return jsonData;
