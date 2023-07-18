@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
-import { Bedtype } from './entities/bedtype.entity';
-import { CreateBedtypeDto } from './dto/create-bedtype.dto'; 
-import { UpdateBedtypeDto } from './dto/update-bedtype.dto';
+import { Roomtype } from './entities/roomtype.entity';
+import { CreateRoomtypeDto } from './dto/create-roomtype.dto'; 
+import { UpdateRoomtypeDto } from './dto/update-roomtype.dto';
 
 @Injectable()
-export class BedtypeService {
+export class RoomtypeService {
   constructor(
-    @InjectRepository(Bedtype)
-    private readonly repo: Repository<Bedtype>,
+    @InjectRepository(Roomtype)
+    private readonly repo: Repository<Roomtype>,
     private readonly connection2: Connection,
   ) {}
 
@@ -19,8 +19,8 @@ export class BedtypeService {
     `);
   }
 
-  async store(data: CreateBedtypeDto) {
-    const roomType = new Bedtype();
+  async store(data: CreateRoomtypeDto) {
+    const roomType = new Roomtype();
     roomType.id = this.generateID(6)
     roomType.room_type = data.room_type
 
@@ -35,7 +35,7 @@ export class BedtypeService {
     return doc
   }
 
-  async update(id, data: UpdateBedtypeDto) {
+  async update(id, data: UpdateRoomtypeDto) {
     const roomType = {
       room_type: data.room_type,
       updated_at: new Date()

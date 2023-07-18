@@ -8,7 +8,7 @@ import { AppointmentModule } from './appointment/appointment.module';
 import { PharmacistsModule } from './pharmacists/pharmacists.module';
 import { NursesModule } from './nurses/nurses.module';
 import { ReceptionistsModule } from './receptionists/receptionists.module';
-import { BedtypeModule } from './bedtype/bedtype.module';
+import { RoomtypeModule } from './roomtype/roomtype.module';
 import { BedroomModule } from './bedroom/bedroom.module';
 import { MedicineModule } from './medicine/medicine.module';
 import { BloodsModule } from './bloods/bloods.module';
@@ -21,7 +21,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 import { Specialization } from './specialization/entities/specialization.entity';
 import { Doctor } from './doctors/entities/doctor.entity';
 import { Patient } from './patients/entities/patient.entity';
-import { Bedtype } from './bedtype/entities/bedtype.entity';
+import { Roomtype } from './roomtype/entities/roomtype.entity';
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import { Bedtype } from './bedtype/entities/bedtype.entity';
         username: 'admin',
         password: 'dimedicadmin',
         database: 'dimedic',
-        entities: [Specialization, Doctor, Patient, Bedtype],
+        entities: [Specialization, Doctor, Patient, Roomtype],
         synchronize: false,
       }),
     }),
@@ -49,7 +49,7 @@ import { Bedtype } from './bedtype/entities/bedtype.entity';
     PharmacistsModule,
     NursesModule,
     ReceptionistsModule,
-    BedtypeModule,
+    RoomtypeModule,
     BedroomModule,
     MedicineModule,
     BloodsModule,

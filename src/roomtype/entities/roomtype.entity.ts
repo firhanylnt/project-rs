@@ -9,7 +9,7 @@ import {
 @Entity({
   name: 'room_types',
 })
-export class Bedtype {
+export class Roomtype {
   @PrimaryColumn()
   id: string;
 

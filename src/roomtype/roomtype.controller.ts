@@ -7,16 +7,16 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { BedtypeService } from './bedtype.service';
-import { CreateBedtypeDto } from './dto/create-bedtype.dto';
-import { UpdateBedtypeDto } from './dto/update-bedtype.dto';
+import { RoomtypeService } from './roomtype.service';
+import { CreateRoomtypeDto } from './dto/create-roomtype.dto';
+import { UpdateRoomtypeDto } from './dto/update-roomtype.dto';
 
-@Controller('bedtype')
-export class BedtypeController {
-  constructor(private readonly bedtypeService: BedtypeService) {}
+@Controller('room-types')
+export class RoomtypeController {
+  constructor(private readonly bedtypeService: RoomtypeService) {}
 
   @Post()
-  create(@Body() createBedtypeDto: CreateBedtypeDto) {
+  create(@Body() createBedtypeDto: CreateRoomtypeDto) {
     return this.bedtypeService.store(createBedtypeDto);
   }
 
@@ -31,7 +31,7 @@ export class BedtypeController {
   }
 
   @Post(':id')
-  update(@Param('id') id: string, @Body() updateBedtypeDto: UpdateBedtypeDto) {
+  update(@Param('id') id: string, @Body() updateBedtypeDto: UpdateRoomtypeDto) {
     return this.bedtypeService.update(id, updateBedtypeDto);
   }
 
