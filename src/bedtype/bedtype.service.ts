@@ -1,68 +1,69 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBedtypeDto } from './dto/create-bedtype.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Connection, Repository } from 'typeorm';
+import { Bedtype } from './entities/bedtype.entity';
+import { CreateBedtypeDto } from './dto/create-bedtype.dto'; 
 import { UpdateBedtypeDto } from './dto/update-bedtype.dto';
-import { readFileSync, writeFileSync } from 'fs';
 
 @Injectable()
 export class BedtypeService {
-  private filePath = __dirname + '/bedtype/bedtype.json';
+  constructor(
+    @InjectRepository(Bedtype)
+    private readonly repo: Repository<Bedtype>,
+    private readonly connection2: Connection,
+  ) {}
 
-  private getData(): any[] {
-    const jsonData = readFileSync(this.filePath, 'utf-8');
-    return JSON.parse(jsonData);
+  async getAll() {
+    return this.connection2.query(`
+      select * from room_types
+    `);
   }
 
-  private saveData(data: any[]): void {
-    writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+  async store(data: CreateBedtypeDto) {
+    const roomType = new Bedtype();
+    roomType.id = this.generateID(6)
+    roomType.room_type = data.room_type
+
+    return await this.repo.save(roomType);
   }
 
-  create(data): void {
-    const existingData = this.getData();
-    data.id = this.generate_code(6);
-    existingData.push(data);
-    this.saveData(existingData);
+  async getById(id) {
+    const doc = await this.repo.findOne({
+      where: { id: id },
+    });
+
+    return doc
   }
 
-  findAll() {
-    const jsonData = this.getData();
-    return jsonData;
+  async update(id, data: UpdateBedtypeDto) {
+    const roomType = {
+      room_type: data.room_type,
+      updated_at: new Date()
+    };
+
+    await this.repo.update(id, roomType);
+
+    return await this.repo.findOne({
+      where: { id: id },
+    });
   }
 
-  findOne(id: string) {
-    const jsonData = this.getData();
-    const item = jsonData.find((item) => item.id === id);
-    return item ? item : 'Item not found';
+  async remove(id) {
+    const result = await this.repo.delete({ id: id });
+    if (result.affected > 0) return {'message': 'Room Type deleted!'}
+    else return {'message': 'Failed to delete Room Type!'}
   }
 
-  update(id: string, updatedData) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData[index] = { ...jsonData[index], ...updatedData };
-    this.saveData(jsonData);
-    return 'Data updated successfully';
-  }
-
-  remove(id: string) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData.splice(index, 1);
-    this.saveData(jsonData);
-    return 'Data deleted successfully';
-  }
-
-  generate_code(length) {
+  generateID(length) {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
-    const characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-    const charactersLength = characters.length;
+    const charsetLength = charset.length;
+  
     for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      const randomIndex = Math.floor(Math.random() * charsetLength);
+      result += charset[randomIndex];
     }
+  
     return result;
   }
 }

@@ -1,1 +1,3 @@
-export class CreateBedtypeDto {}
+export class CreateBedtypeDto {
+  room_type: string;
+}

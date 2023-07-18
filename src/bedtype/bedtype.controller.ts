@@ -17,17 +17,17 @@ export class BedtypeController {
 
   @Post()
   create(@Body() createBedtypeDto: CreateBedtypeDto) {
-    return this.bedtypeService.create(createBedtypeDto);
+    return this.bedtypeService.store(createBedtypeDto);
   }
 
   @Get()
   findAll() {
-    return this.bedtypeService.findAll();
+    return this.bedtypeService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.bedtypeService.findOne(id);
+    return this.bedtypeService.getById(id);
   }
 
   @Post(':id')

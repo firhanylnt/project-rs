@@ -21,6 +21,7 @@ import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConne
 import { Specialization } from './specialization/entities/specialization.entity';
 import { Doctor } from './doctors/entities/doctor.entity';
 import { Patient } from './patients/entities/patient.entity';
+import { Bedtype } from './bedtype/entities/bedtype.entity';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { Patient } from './patients/entities/patient.entity';
         username: 'admin',
         password: 'dimedicadmin',
         database: 'dimedic',
-        entities: [Specialization, Doctor, Patient],
+        entities: [Specialization, Doctor, Patient, Bedtype],
         synchronize: false,
       }),
     }),
