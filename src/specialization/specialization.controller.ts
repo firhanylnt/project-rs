@@ -17,7 +17,7 @@ export class SpecializationController {
 
   @Post()
   create(@Body() data: CreateSpecializationDto) {
-    return this.specializationService.create(data);
+    return this.specializationService.store(data);
   }
 
   @Get()

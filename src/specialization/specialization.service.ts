@@ -3,12 +3,12 @@ import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
 import { Specialization } from './entities/specialization.entity'
 import { readFileSync, writeFileSync } from 'fs';
-import { CreateSpecializationDto } from './dto/create-specialization.dto';
-import { UpdateSpecializationDto } from './dto/update-specialization.dto';
 
 @Injectable()
 export class SpecializationService {
   constructor(
+    @InjectRepository(Specialization)
+    private readonly repo: Repository<Specialization>,
     private readonly connection2: Connection,
   ) {}
 
@@ -16,6 +16,13 @@ export class SpecializationService {
     return this.connection2.query(`
       select * from specializations
     `);
+  }
+
+  async store(data) {
+    const spec = new Specialization();
+    spec.name = data.name
+
+    return await this.repo.save(spec);
   }
 
   private filePath = __dirname + '/specialization/specializations.json';
