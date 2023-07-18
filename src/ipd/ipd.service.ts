@@ -1,68 +1,87 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Connection, Repository } from 'typeorm';
+import { Ipd } from './entities/ipd.entity';
 import { CreateIpdDto } from './dto/create-ipd.dto';
 import { UpdateIpdDto } from './dto/update-ipd.dto';
-import { readFileSync, writeFileSync } from 'fs';
 
 @Injectable()
 export class IpdService {
-  private filePath = __dirname + '/ipd/ipd.json';
+  constructor(
+    @InjectRepository(Ipd)
+    private readonly repo: Repository<Ipd>,
+    private readonly connection2: Connection,
+  ) {}
 
-  private getData(): any[] {
-    const jsonData = readFileSync(this.filePath, 'utf-8');
-    return JSON.parse(jsonData);
+  async getAll() {
+    return this.connection2.query(`
+      select * from patients_ipd
+    `);
   }
 
-  private saveData(data: any[]): void {
-    writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+  async store(data: CreateIpdDto) {
+    const ipd = new Ipd();
+    ipd.id = this.generateID(6)
+    ipd.patient_id = data.patient_id
+    ipd.room_id = data.room_id
+    ipd.blood_pressure = data.blood_pressure
+    ipd.height = data.height
+    ipd.weight = data.weight
+    ipd.admission_date = data.admission_date
+    ipd.payment_method = data.payment_method
+    ipd.symptoms = data.symptoms
+    ipd.notes = data.notes
+    ipd.is_active = data.is_active
+
+    return await this.repo.save(ipd);
   }
 
-  create(data): void {
-    const existingData = this.getData();
-    data.id = this.generate_code(6);
-    existingData.push(data);
-    this.saveData(existingData);
+  async getById(id) {
+    const doc = await this.repo.findOne({
+      where: { id: id },
+    });
+
+    return doc
   }
 
-  findAll() {
-    const jsonData = this.getData();
-    return jsonData;
+  async update(id, data: UpdateIpdDto) {
+    const ipd = {
+      patient_id: data.patient_id,
+      room_id: data.room_id,
+      blood_pressure: data.blood_pressure,
+      height: data.height,
+      weight: data.weight,
+      admission_date: data.admission_date,
+      payment_method: data.payment_method,
+      symptoms: data.symptoms,
+      notes: data.notes,
+      is_active: data.is_active,
+      updated_at: new Date()
+    };
+
+    await this.repo.update(id, ipd);
+
+    return await this.repo.findOne({
+      where: { id: id },
+    });
   }
 
-  findOne(id: string) {
-    const jsonData = this.getData();
-    const item = jsonData.find((item) => item.id === id);
-    return item ? item : 'Item not found';
+  async remove(id) {
+    const result = await this.repo.delete({ id: id });
+    if (result.affected > 0) return {'message': 'Patient IPD deleted!'}
+    else return {'message': 'Failed to delete Patient IPD!'}
   }
 
-  update(id: string, updatedData) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData[index] = { ...jsonData[index], ...updatedData };
-    this.saveData(jsonData);
-    return 'Data updated successfully';
-  }
-
-  remove(id: string) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData.splice(index, 1);
-    this.saveData(jsonData);
-    return 'Data deleted successfully';
-  }
-
-  generate_code(length) {
+  generateID(length) {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
-    const characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-    const charactersLength = characters.length;
+    const charsetLength = charset.length;
+  
     for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      const randomIndex = Math.floor(Math.random() * charsetLength);
+      result += charset[randomIndex];
     }
+  
     return result;
   }
 }

@@ -23,6 +23,8 @@ import { Doctor } from './doctors/entities/doctor.entity';
 import { Patient } from './patients/entities/patient.entity';
 import { Roomtype } from './roomtype/entities/roomtype.entity';
 import { Room } from './room/entities/room.entity';
+import { Ipd } from './ipd/entities/ipd.entity';
+import { Appointment } from './appointment/entities/appointment.entity';
 
 @Module({
   imports: [
@@ -38,7 +40,7 @@ import { Room } from './room/entities/room.entity';
         username: 'admin',
         password: 'dimedicadmin',
         database: 'dimedic',
-        entities: [Specialization, Doctor, Patient, Roomtype, Room],
+        entities: [Specialization, Doctor, Patient, Roomtype, Room, Ipd, Appointment],
         synchronize: false,
       }),
     }),

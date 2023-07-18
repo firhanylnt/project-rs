@@ -17,17 +17,17 @@ export class IpdController {
 
   @Post()
   create(@Body() createIpdDto: CreateIpdDto) {
-    return this.ipdService.create(createIpdDto);
+    return this.ipdService.store(createIpdDto);
   }
 
   @Get()
   findAll() {
-    return this.ipdService.findAll();
+    return this.ipdService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.ipdService.findOne(id);
+    return this.ipdService.getById(id);
   }
 
   @Post(':id')
