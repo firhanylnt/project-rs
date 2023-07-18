@@ -8,7 +8,6 @@ import {
 
 @Entity({
   name: 'specializations',
-  synchronize: false,
 })
 export class Specialization {
   @PrimaryGeneratedColumn()
@@ -17,9 +16,9 @@ export class Specialization {
   @Column()
   name: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP(6)' })
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
+  @UpdateDateColumn({ type: 'timestamp', default: () => "CURRENT_TIMESTAMP(6)", onUpdate: "CURRENT_TIMESTAMP(6)" })
   updated_at: Date;
 }

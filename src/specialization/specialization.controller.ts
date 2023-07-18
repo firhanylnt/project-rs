@@ -27,7 +27,7 @@ export class SpecializationController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.specializationService.findOne(id);
+    return this.specializationService.getById(id);
   }
 
   @Post(':id')

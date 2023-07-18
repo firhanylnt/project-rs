@@ -3,6 +3,8 @@ import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
 import { Specialization } from './entities/specialization.entity'
 import { readFileSync, writeFileSync } from 'fs';
+import { CreateSpecializationDto } from './dto/create-specialization.dto';
+import { UpdateSpecializationDto } from './dto/update-specialization.dto';
 
 @Injectable()
 export class SpecializationService {
@@ -18,62 +20,38 @@ export class SpecializationService {
     `);
   }
 
-  async store(data) {
+  async store(data: CreateSpecializationDto) {
     const spec = new Specialization();
     spec.name = data.name
 
     return await this.repo.save(spec);
   }
 
-  private filePath = __dirname + '/specialization/specializations.json';
+  async getById(id) {
+    const spec = await this.repo.findOne({
+      where: { id: id },
+    });
 
-  private getData(): any[] {
-    const jsonData = readFileSync(this.filePath, 'utf-8');
-    return JSON.parse(jsonData);
+    return spec
   }
 
-  private saveData(data: any[]): void {
-    writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+  async update(id, data: UpdateSpecializationDto) {
+    const spec = {
+      name: data.name,
+      updated_at: new Date()
+    };
+
+    await this.repo.update(id, spec);
+
+    return await this.repo.findOne({
+      where: { id: id },
+    });
   }
 
-  create(data): void {
-    const existingData = this.getData();
-    data.id = this.generate_code(6);
-    existingData.push(data);
-    this.saveData(existingData);
-  }
-
-  findAll() {
-    const jsonData = this.getData();
-    return jsonData;
-  }
-
-  findOne(id: string) {
-    const jsonData = this.getData();
-    const item = jsonData.find((item) => item.id === id);
-    return item ? item : 'Item not found';
-  }
-
-  update(id: string, updatedData) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData[index] = { ...jsonData[index], ...updatedData };
-    this.saveData(jsonData);
-    return 'Data updated successfully';
-  }
-
-  remove(id: string) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData.splice(index, 1);
-    this.saveData(jsonData);
-    return 'Data deleted successfully';
+  async remove(id) {
+    const result = await this.repo.delete({ id: id });
+    if (result.affected > 0) return {'message': 'Specialization deleted!'}
+    else return {'message': 'Failed to delete Specialization!'}
   }
 
   generate_code(length) {
