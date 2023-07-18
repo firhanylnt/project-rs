@@ -13,30 +13,30 @@ import { UpdateRoomtypeDto } from './dto/update-roomtype.dto';
 
 @Controller('room-types')
 export class RoomtypeController {
-  constructor(private readonly bedtypeService: RoomtypeService) {}
+  constructor(private readonly roomtypeService: RoomtypeService) {}
 
   @Post()
-  create(@Body() createBedtypeDto: CreateRoomtypeDto) {
-    return this.bedtypeService.store(createBedtypeDto);
+  create(@Body() createRoomtypeDto: CreateRoomtypeDto) {
+    return this.roomtypeService.store(createRoomtypeDto);
   }
 
   @Get()
   findAll() {
-    return this.bedtypeService.getAll();
+    return this.roomtypeService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.bedtypeService.getById(id);
+    return this.roomtypeService.getById(id);
   }
 
   @Post(':id')
   update(@Param('id') id: string, @Body() updateBedtypeDto: UpdateRoomtypeDto) {
-    return this.bedtypeService.update(id, updateBedtypeDto);
+    return this.roomtypeService.update(id, updateBedtypeDto);
   }
 
   @Post('delete/:id')
   remove(@Param('id') id: string) {
-    return this.bedtypeService.remove(id);
+    return this.roomtypeService.remove(id);
   }
 }
