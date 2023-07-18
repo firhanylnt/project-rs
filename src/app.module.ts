@@ -9,7 +9,7 @@ import { PharmacistsModule } from './pharmacists/pharmacists.module';
 import { NursesModule } from './nurses/nurses.module';
 import { ReceptionistsModule } from './receptionists/receptionists.module';
 import { RoomtypeModule } from './roomtype/roomtype.module';
-import { BedroomModule } from './bedroom/bedroom.module';
+import { RoomModule } from './room/room.module';
 import { MedicineModule } from './medicine/medicine.module';
 import { BloodsModule } from './bloods/bloods.module';
 import { IpdModule } from './ipd/ipd.module';
@@ -22,6 +22,7 @@ import { Specialization } from './specialization/entities/specialization.entity'
 import { Doctor } from './doctors/entities/doctor.entity';
 import { Patient } from './patients/entities/patient.entity';
 import { Roomtype } from './roomtype/entities/roomtype.entity';
+import { Room } from './room/entities/room.entity';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { Roomtype } from './roomtype/entities/roomtype.entity';
         username: 'admin',
         password: 'dimedicadmin',
         database: 'dimedic',
-        entities: [Specialization, Doctor, Patient, Roomtype],
+        entities: [Specialization, Doctor, Patient, Roomtype, Room],
         synchronize: false,
       }),
     }),
@@ -50,7 +51,7 @@ import { Roomtype } from './roomtype/entities/roomtype.entity';
     NursesModule,
     ReceptionistsModule,
     RoomtypeModule,
-    BedroomModule,
+    RoomModule,
     MedicineModule,
     BloodsModule,
     IpdModule,
