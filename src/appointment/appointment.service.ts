@@ -1,68 +1,63 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Connection, Repository } from 'typeorm';
+import { Appointment } from './entities/appointment.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import { readFileSync, writeFileSync } from 'fs';
 
 @Injectable()
 export class AppointmentService {
-  private filePath = __dirname + '/appointment/appointment.json';
+  constructor(
+    @InjectRepository(Appointment)
+    private readonly repo: Repository<Appointment>,
+    private readonly connection2: Connection,
+  ) {}
 
-  private getData(): any[] {
-    const jsonData = readFileSync(this.filePath, 'utf-8');
-    return JSON.parse(jsonData);
+  async getAll() {
+    return this.connection2.query(`
+      select * from appointments
+    `);
   }
 
-  private saveData(data: any[]): void {
-    writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+  async store(data: CreateAppointmentDto) {
+    const appo = new Appointment();
+    appo.patient_id = data.patient_id
+    appo.specialization_id = data.specialization_id
+    appo.doctor_id = data.doctor_id
+    appo.appointment_date = data.appointment_date
+    appo.payment_method = data.payment_method
+
+    return await this.repo.save(appo);
   }
 
-  create(data): void {
-    const existingData = this.getData();
-    data.id = this.generate_code(6);
-    existingData.push(data);
-    this.saveData(existingData);
+  async getById(id) {
+    const doc = await this.repo.findOne({
+      where: { id: id },
+    });
+
+    return doc
   }
 
-  findAll() {
-    const jsonData = this.getData();
-    return jsonData;
+  async update(id, data: UpdateAppointmentDto) {
+    const appo = {
+      patient_id: data.patient_id,
+      specialization_id: data.specialization_id,
+      doctor_id: data.doctor_id,
+      appointment_date: data.appointment_date,
+      payment_method: data.payment_method,  
+      updated_at: new Date()
+    };
+
+    await this.repo.update(id, appo);
+
+    return await this.repo.findOne({
+      where: { id: id },
+    });
   }
 
-  findOne(id: string) {
-    const jsonData = this.getData();
-    const item = jsonData.find((item) => item.id === id);
-    return item ? item : 'Item not found';
-  }
-
-  update(id: string, updatedData) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData[index] = { ...jsonData[index], ...updatedData };
-    this.saveData(jsonData);
-    return 'Data updated successfully';
-  }
-
-  remove(id: string) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData.splice(index, 1);
-    this.saveData(jsonData);
-    return 'Data deleted successfully';
-  }
-
-  generate_code(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+  async remove(id) {
+    const result = await this.repo.delete({ id: id });
+    if (result.affected > 0) return {'message': 'Appointment deleted!'}
+    else return {'message': 'Failed to delete Appointment!'}
   }
 }

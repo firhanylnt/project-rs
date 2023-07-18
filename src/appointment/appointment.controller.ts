@@ -9,29 +9,29 @@ export class AppointmentController {
 
   @Post()
   create(@Body() createAppointmentDto: CreateAppointmentDto) {
-    return this.appointmentService.create(createAppointmentDto);
+    return this.appointmentService.store(createAppointmentDto);
   }
 
   @Get()
   findAll() {
-    return this.appointmentService.findAll();
+    return this.appointmentService.getAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.appointmentService.findOne(id);
+  findOne(@Param('id') id: number) {
+    return this.appointmentService.getById(id);
   }
 
   @Post(':id')
   update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateAppointmentDto: UpdateAppointmentDto,
   ) {
     return this.appointmentService.update(id, updateAppointmentDto);
   }
 
   @Post('delete/:id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.appointmentService.remove(id);
   }
 }
