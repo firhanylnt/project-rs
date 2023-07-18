@@ -1,8 +1,8 @@
 export class CreatePatientDto {
   first_name: string;
   last_name: string;
-  dob: string;
   gender: string;
+  dob: Date;
   email: string;
   phone: string;
   address: string;
