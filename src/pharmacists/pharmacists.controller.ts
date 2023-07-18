@@ -17,17 +17,17 @@ export class PharmacistsController {
 
   @Post()
   create(@Body() createPharmacistDto: CreatePharmacistDto) {
-    return this.pharmacistsService.create(createPharmacistDto);
+    return this.pharmacistsService.store(createPharmacistDto);
   }
 
   @Get()
   findAll() {
-    return this.pharmacistsService.findAll();
+    return this.pharmacistsService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.pharmacistsService.findOne(id);
+    return this.pharmacistsService.getById(id);
   }
 
   @Post(':id')

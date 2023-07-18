@@ -1,68 +1,64 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateNurseDto } from './dto/create-nurse.dto';
 import { UpdateNurseDto } from './dto/update-nurse.dto';
-import { readFileSync, writeFileSync } from 'fs';
+import { Nurses } from './entities/nurse.entity';
 
 @Injectable()
 export class NursesService {
-  private filePath = __dirname + '/nurses/nurses.json';
+  constructor(
+    @InjectRepository(Nurses)
+    private readonly repo: Repository<Nurses>,
+  ) {}
 
-  private getData(): any[] {
-    const jsonData = readFileSync(this.filePath, 'utf-8');
-    return JSON.parse(jsonData);
+  async getAll() {
+    return this.repo.find();
   }
 
-  private saveData(data: any[]): void {
-    writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+  async store(data: CreateNurseDto) {
+    const src = new Nurses();
+    src.first_name = data.first_name;
+    src.last_name = data.last_name;
+    src.dob = data.dob;
+    src.gender = data.gender;
+    src.phone = data.phone;
+    src.email = data.email;
+    src.address = data.address;
+
+    return await this.repo.save(src);
   }
 
-  create(data): void {
-    const existingData = this.getData();
-    data.id = this.generate_code(6);
-    existingData.push(data);
-    this.saveData(existingData);
+  async getById(id) {
+    const src = await this.repo.findOne({
+      where: { id: id },
+    });
+
+    return src;
   }
 
-  findAll() {
-    const jsonData = this.getData();
-    return jsonData;
+  async update(id, data: UpdateNurseDto) {
+    const src = {
+      first_name: data.first_name,
+      last_name: data.last_name,
+      dob: data.dob,
+      gender: data.gender,
+      phone: data.phone,
+      email: data.email,
+      address: data.address,
+      updated_at: new Date(),
+    };
+
+    await this.repo.update(id, src);
+
+    return await this.repo.findOne({
+      where: { id: id },
+    });
   }
 
-  findOne(id: string) {
-    const jsonData = this.getData();
-    const item = jsonData.find((item) => item.id === id);
-    return item ? item : 'Item not found';
-  }
-
-  update(id: string, updatedData) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData[index] = { ...jsonData[index], ...updatedData };
-    this.saveData(jsonData);
-    return 'Data updated successfully';
-  }
-
-  remove(id: string) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData.splice(index, 1);
-    this.saveData(jsonData);
-    return 'Data deleted successfully';
-  }
-
-  generate_code(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+  async remove(id) {
+    const result = await this.repo.delete({ id: id });
+    if (result.affected > 0) return { message: 'Nurse deleted!' };
+    else return { message: 'Failed to delete Nurse!' };
   }
 }

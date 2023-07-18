@@ -1,26 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateBloodDto } from './dto/create-blood.dto';
-import { UpdateBloodDto } from './dto/update-blood.dto';
-import { readFileSync, writeFileSync } from 'fs';
-import { BloodBank } from './entities/blood.entity';
+import { CreateAssetDto } from './dto/create-asset.dto';
+import { UpdateAssetDto } from './dto/update-asset.dto';
+import { Assets } from './entities/asset.entity';
 
 @Injectable()
-export class BloodsService {
+export class AssetsService {
   constructor(
-    @InjectRepository(BloodBank)
-    private readonly repo: Repository<BloodBank>,
+    @InjectRepository(Assets)
+    private readonly repo: Repository<Assets>,
   ) {}
 
   async getAll() {
     return this.repo.find();
   }
 
-  async store(data: CreateBloodDto) {
-    const src = new BloodBank();
+  async store(data: CreateAssetDto) {
+    const src = new Assets();
     src.name = data.name;
+    src.brand = data.brand;
     src.stock = data.stock;
+    src.price = data.price;
+    src.description = data.description;
     return await this.repo.save(src);
   }
 
@@ -32,10 +34,13 @@ export class BloodsService {
     return src;
   }
 
-  async update(id, data: UpdateBloodDto) {
+  async update(id, data: UpdateAssetDto) {
     const src = {
       name: data.name,
+      brand: data.brand,
       stock: data.stock,
+      price: data.price,
+      description: data.description,
       updated_at: new Date(),
     };
 
@@ -48,7 +53,7 @@ export class BloodsService {
 
   async remove(id) {
     const result = await this.repo.delete({ id: id });
-    if (result.affected > 0) return { message: 'Bloog Group deleted!' };
-    else return { message: 'Failed to delete Bloog Group!' };
+    if (result.affected > 0) return { message: 'Medicine deleted!' };
+    else return { message: 'Failed to delete Medicine!' };
   }
 }

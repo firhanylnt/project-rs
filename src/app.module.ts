@@ -25,6 +25,14 @@ import { Roomtype } from './roomtype/entities/roomtype.entity';
 import { Room } from './room/entities/room.entity';
 import { Ipd } from './ipd/entities/ipd.entity';
 import { Appointment } from './appointment/entities/appointment.entity';
+import { AssetsModule } from './assets/assets.module';
+import { Receptionist } from './receptionists/entities/receptionist.entity';
+import { Pharmacist } from './pharmacists/entities/pharmacist.entity';
+import { Nurses } from './nurses/entities/nurse.entity';
+import { Medicine } from './medicine/entities/medicine.entity';
+import { Assets } from './assets/entities/asset.entity';
+import { BloodBank } from './bloods/entities/blood.entity';
+import { Users } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -40,7 +48,22 @@ import { Appointment } from './appointment/entities/appointment.entity';
         username: 'admin',
         password: 'dimedicadmin',
         database: 'dimedic',
-        entities: [Specialization, Doctor, Patient, Roomtype, Room, Ipd, Appointment],
+        entities: [
+          Specialization,
+          Doctor,
+          Patient,
+          Roomtype,
+          Room,
+          Ipd,
+          Appointment,
+          Receptionist,
+          Pharmacist,
+          Nurses,
+          Medicine,
+          Assets,
+          BloodBank,
+          Users,
+        ],
         synchronize: false,
       }),
     }),
@@ -58,6 +81,7 @@ import { Appointment } from './appointment/entities/appointment.entity';
     BloodsModule,
     IpdModule,
     UsersModule,
+    AssetsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

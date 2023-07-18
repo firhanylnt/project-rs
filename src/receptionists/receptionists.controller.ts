@@ -17,17 +17,17 @@ export class ReceptionistsController {
 
   @Post()
   create(@Body() createReceptionistDto: CreateReceptionistDto) {
-    return this.receptionistsService.create(createReceptionistDto);
+    return this.receptionistsService.store(createReceptionistDto);
   }
 
   @Get()
   findAll() {
-    return this.receptionistsService.findAll();
+    return this.receptionistsService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.receptionistsService.findOne(id);
+    return this.receptionistsService.getById(id);
   }
 
   @Post(':id')

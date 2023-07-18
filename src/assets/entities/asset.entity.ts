@@ -7,14 +7,26 @@ import {
 } from 'typeorm';
 
 @Entity({
-  name: 'specializations',
+  name: 'assets',
 })
-export class Specialization {
+export class Assets {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
+
+  @Column()
+  brand: string;
+
+  @Column()
+  stock: number;
+
+  @Column()
+  price: number;
+
+  @Column()
+  description: string;
 
   @CreateDateColumn({
     type: 'timestamp',
