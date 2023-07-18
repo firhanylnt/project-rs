@@ -13,9 +13,13 @@ export class RoomService {
     private readonly connection2: Connection,
   ) {}
 
-  async getAll() {
+  async getAll(roomType = null) {
+    let whereQuery = ''
+    if (roomType != null) whereQuery = `where rt.room_type = '${roomType}'`
     return this.connection2.query(`
-      select * from rooms
+      select r.id, r.room_number as number, rt.room_type as type, r.slot from rooms as r
+      inner join room_types as rt on r.room_type_id = rt.id
+      ${whereQuery}
     `);
   }
 
@@ -30,11 +34,20 @@ export class RoomService {
   }
 
   async getById(id) {
-    const doc = await this.repo.findOne({
-      where: { id: id },
-    });
+    const queryResult = await this.connection2
+    .createQueryBuilder()
+    .select('r.id', 'id')
+    .addSelect('r.room_number', 'number')
+    .addSelect('r.slot', 'slot')
+    .addSelect('rt.room_type', 'type')
+    .addSelect('rt.id', 'room_type_id')
+    .from('rooms', 'r')
+    .innerJoin('room_types', 'rt', 'r.room_type_id = rt.id')
+    .where('r.id = :id', { id: id }) 
+    .limit(1)
+    .getRawOne();
 
-    return doc
+    return queryResult;
   }
 
   async update(id, data: UpdateRoomDto) {

@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
@@ -19,8 +20,10 @@ export class DoctorsController {
   }
 
   @Get()
-  findAll() {
-    return this.doctorsService.getAll();
+  findAll(@Query() query: any) {
+    const { specialization, gender } = query;
+
+    return this.doctorsService.getAll(specialization);
   }
 
   @Get(':id')

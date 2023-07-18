@@ -13,9 +13,12 @@ export class IpdService {
     private readonly connection2: Connection,
   ) {}
 
+  // id, patient, room, date, status
   async getAll() {
     return this.connection2.query(`
-      select * from patients_ipd
+      select pi.id, p.first_name as patient, r.room_number as room, pi.admission_date as date, case when pi.is_active then 'Active' else 'Inactive' end as status from patients_ipd as pi
+      inner join patients as p on pi.patient_id = p.id
+      inner join rooms as r on pi.room_id = r.id
     `);
   }
 
@@ -37,11 +40,35 @@ export class IpdService {
   }
 
   async getById(id) {
-    const doc = await this.repo.findOne({
-      where: { id: id },
-    });
+    const queryResult = await this.connection2
+    .createQueryBuilder()
+    .select('i.id', 'id')
+    .addSelect('i.patient_id', 'patient_id')
+    .addSelect('p.first_name', 'patient_first_name')
+    .addSelect('p.last_name', 'patient_last_name')
+    .addSelect('p.dob', 'patient_dob')
+    .addSelect('i.room_id', 'room_id')
+    .addSelect('r.room_number', 'room_number')
+    .addSelect('rt.room_type', 'room_type')
+    .addSelect('i.blood_pressure', 'blood_pressure')
+    .addSelect('i.height', 'height')
+    .addSelect('i.weight', 'weight')
+    .addSelect('i.admission_date', 'admission_date')
+    .addSelect('i.payment_method', 'payment_method')
+    .addSelect('i.symptoms', 'symptoms')
+    .addSelect('i.notes', 'notes')
+    .addSelect('i.is_active', 'is_active')
+    .addSelect('i.created_at', 'created_at')
+    .addSelect('i.updated_at', 'updated_at')
+    .from('patients_ipd', 'i')
+    .innerJoin('patients', 'p', 'i.patient_id = p.id')
+    .innerJoin('rooms', 'r', 'i.room_id = r.id')
+    .innerJoin('room_types', 'rt', 'r.room_type_id = rt.id')
+    .where('i.id = :id', { id: id }) 
+    .limit(1)
+    .getRawOne();
 
-    return doc
+    return queryResult
   }
 
   async update(id, data: UpdateIpdDto) {

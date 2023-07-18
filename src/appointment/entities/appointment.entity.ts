@@ -17,9 +17,6 @@ export class Appointment {
   patient_id: string;
 
   @Column()
-  specialization_id: number;
-
-  @Column()
   doctor_id: string;
 
   @Column()

@@ -15,7 +15,8 @@ export class SpecializationService {
 
   async getAll() {
     return this.connection2.query(`
-      select * from specializations
+      select s.id, s.name as specialization from specializations as s
+      order by s.id desc
     `);
   }
 

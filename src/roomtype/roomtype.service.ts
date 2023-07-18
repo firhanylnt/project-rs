@@ -15,7 +15,7 @@ export class RoomtypeService {
 
   async getAll() {
     return this.connection2.query(`
-      select * from room_types
+      select rt.id, rt.room_type as type from room_types as rt
     `);
   }
 

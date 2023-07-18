@@ -13,9 +13,13 @@ export class DoctorsService {
     private readonly connection2: Connection,
   ) {}
 
-  async getAll() {
+  async getAll(specialization = null) {
+    let whereQuery = ''
+    if (specialization != null) whereQuery = `where s.name like '%${specialization}%'`
     return this.connection2.query(`
-      select * from doctors
+      select d.id, s.name as specialization, d.name, d.gender from doctors as d
+      inner join specializations as s on d.specialization_id = s.id
+      ${whereQuery}
     `);
   }
 
@@ -33,11 +37,25 @@ export class DoctorsService {
   }
 
   async getById(id) {
-    const doc = await this.repo.findOne({
-      where: { id: id },
-    });
+    const queryResult = await this.connection2
+    .createQueryBuilder()
+    .select('d.id', 'id')
+    .addSelect('d.specialization_id', 'specialization_id')
+    .addSelect('s.name', 'specialization')
+    .addSelect('d.name', 'name')
+    .addSelect('d.dob', 'dob')
+    .addSelect('d.gender', 'gender')
+    .addSelect('d.email', 'email')
+    .addSelect('d.phone', 'phone')
+    .addSelect('d.created_at', 'created_at')
+    .addSelect('d.updated_at', 'updated_at')
+    .from('doctors', 'd')
+    .innerJoin('specializations', 's', 'd.specialization_id = s.id')
+    .where('d.id = :id', { id: id }) 
+    .limit(1)
+    .getRawOne();
 
-    return doc
+    return queryResult;
   }
 
   async update(id, data: UpdateDoctorDto) {
