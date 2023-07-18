@@ -1,8 +1,8 @@
 export class CreateDoctorDto {
+  specialization_id: number;
   name: string;
-  dob: string;
+  dob: Date;
   gender: string;
-  specialization: string;
   email: string;
   phone: string;
 }

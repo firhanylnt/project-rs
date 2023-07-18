@@ -19,6 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule, Module } from '@nestjs/common';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { Specialization } from './specialization/entities/specialization.entity';
+import { Doctor } from './doctors/entities/doctor.entity';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { Specialization } from './specialization/entities/specialization.entity'
         username: 'admin',
         password: 'dimedicadmin',
         database: 'dimedic',
-        entities: [Specialization],
+        entities: [Specialization, Doctor],
         synchronize: false,
       }),
     }),

@@ -3,9 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
 } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
@@ -17,22 +15,17 @@ export class DoctorsController {
 
   @Post()
   create(@Body() createDoctorDto: CreateDoctorDto) {
-    return this.doctorsService.create(createDoctorDto);
+    return this.doctorsService.store(createDoctorDto);
   }
 
   @Get()
   findAll() {
-    return this.doctorsService.findAll();
+    return this.doctorsService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.doctorsService.findOne(id);
-  }
-
-  @Get('/specialization/:id')
-  findSpecializationOne(@Param('id') id: string) {
-    return this.doctorsService.findSpecializationOne(id);
+    return this.doctorsService.getById(id);
   }
 
   @Post(':id')
