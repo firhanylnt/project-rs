@@ -30,12 +30,12 @@ export class AssetsController {
     return this.assetsService.getById(id);
   }
 
-  @Patch(':id')
+  @Post(':id')
   update(@Param('id') id: string, @Body() updateAssetDto: UpdateAssetDto) {
     return this.assetsService.update(id, updateAssetDto);
   }
 
-  @Delete('delete/:id')
+  @Post('delete/:id')
   remove(@Param('id') id: string) {
     return this.assetsService.remove(id);
   }

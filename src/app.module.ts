@@ -32,6 +32,7 @@ import { Nurses } from './nurses/entities/nurse.entity';
 import { Medicine } from './medicine/entities/medicine.entity';
 import { Assets } from './assets/entities/asset.entity';
 import { BloodBank } from './bloods/entities/blood.entity';
+import { Users } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { BloodBank } from './bloods/entities/blood.entity';
           Medicine,
           Assets,
           BloodBank,
+          Users,
         ],
         synchronize: false,
       }),
