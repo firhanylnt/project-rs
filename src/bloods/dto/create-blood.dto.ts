@@ -1,1 +1,4 @@
-export class CreateBloodDto {}
+export class CreateBloodDto {
+  name: string;
+  stock: number;
+}

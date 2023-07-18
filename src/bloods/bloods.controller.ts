@@ -17,17 +17,17 @@ export class BloodsController {
 
   @Post()
   create(@Body() createBloodDto: CreateBloodDto) {
-    return this.bloodsService.create(createBloodDto);
+    return this.bloodsService.store(createBloodDto);
   }
 
   @Get()
   findAll() {
-    return this.bloodsService.findAll();
+    return this.bloodsService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.bloodsService.findOne(id);
+    return this.bloodsService.getById(id);
   }
 
   @Post(':id')

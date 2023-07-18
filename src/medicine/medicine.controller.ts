@@ -17,17 +17,17 @@ export class MedicineController {
 
   @Post()
   create(@Body() createMedicineDto: CreateMedicineDto) {
-    return this.medicineService.create(createMedicineDto);
+    return this.medicineService.store(createMedicineDto);
   }
 
   @Get()
   findAll() {
-    return this.medicineService.findAll();
+    return this.medicineService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.medicineService.findOne(id);
+    return this.medicineService.getById(id);
   }
 
   @Post(':id')

@@ -1,68 +1,57 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { UpdateMedicineDto } from './dto/update-medicine.dto';
-import { readFileSync, writeFileSync } from 'fs';
+import { Medicine } from './entities/medicine.entity';
 
 @Injectable()
 export class MedicineService {
-  private filePath = __dirname + '/medicine/medicine.json';
+  constructor(
+    @InjectRepository(Medicine)
+    private readonly repo: Repository<Medicine>,
+  ) {}
 
-  private getData(): any[] {
-    const jsonData = readFileSync(this.filePath, 'utf-8');
-    return JSON.parse(jsonData);
+  async getAll() {
+    return this.repo.find();
   }
 
-  private saveData(data: any[]): void {
-    writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+  async store(data: CreateMedicineDto) {
+    const src = new Medicine();
+    src.name = data.name;
+    src.brand = data.brand;
+    src.stock = data.stock;
+    src.price = data.price;
+    return await this.repo.save(src);
   }
 
-  create(data): void {
-    const existingData = this.getData();
-    data.id = this.generate_code(6);
-    existingData.push(data);
-    this.saveData(existingData);
+  async getById(id) {
+    const src = await this.repo.findOne({
+      where: { id: id },
+    });
+
+    return src;
   }
 
-  findAll() {
-    const jsonData = this.getData();
-    return jsonData;
+  async update(id, data: UpdateMedicineDto) {
+    const src = {
+      name: data.name,
+      brand: data.brand,
+      stock: data.stock,
+      price: data.price,
+      updated_at: new Date(),
+    };
+
+    await this.repo.update(id, src);
+
+    return await this.repo.findOne({
+      where: { id: id },
+    });
   }
 
-  findOne(id: string) {
-    const jsonData = this.getData();
-    const item = jsonData.find((item) => item.id === id);
-    return item ? item : 'Item not found';
-  }
-
-  update(id: string, updatedData) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData[index] = { ...jsonData[index], ...updatedData };
-    this.saveData(jsonData);
-    return 'Data updated successfully';
-  }
-
-  remove(id: string) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData.splice(index, 1);
-    this.saveData(jsonData);
-    return 'Data deleted successfully';
-  }
-
-  generate_code(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+  async remove(id) {
+    const result = await this.repo.delete({ id: id });
+    if (result.affected > 0) return { message: 'Medicine deleted!' };
+    else return { message: 'Failed to delete Medicine!' };
   }
 }

@@ -17,17 +17,17 @@ export class NursesController {
 
   @Post()
   create(@Body() createNurseDto: CreateNurseDto) {
-    return this.nursesService.create(createNurseDto);
+    return this.nursesService.store(createNurseDto);
   }
 
   @Get()
   findAll() {
-    return this.nursesService.findAll();
+    return this.nursesService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.nursesService.findOne(id);
+    return this.nursesService.getById(id);
   }
 
   @Post(':id')
