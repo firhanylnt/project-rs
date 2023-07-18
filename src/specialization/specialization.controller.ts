@@ -22,7 +22,7 @@ export class SpecializationController {
 
   @Get()
   findAll() {
-    return this.specializationService.findAll();
+    return this.specializationService.getAll();
   }
 
   @Get(':id')

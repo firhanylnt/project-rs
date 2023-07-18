@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DoctorsModule } from './doctors/doctors.module';
@@ -15,6 +15,10 @@ import { MedicineModule } from './medicine/medicine.module';
 import { BloodsModule } from './bloods/bloods.module';
 import { IpdModule } from './ipd/ipd.module';
 import { UsersModule } from './users/users.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { Specialization } from './specialization/entities/specialization.entity';
 
 @Module({
   imports: [
@@ -32,6 +36,24 @@ import { UsersModule } from './users/users.module';
     BloodsModule,
     IpdModule,
     UsersModule,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule, HttpModule],
+      inject: [ConfigService],
+      useFactory: (
+        configService: ConfigService,
+      ): Partial<PostgresConnectionOptions> => ({
+        type: 'postgres',
+        host: '203.175.11.205',
+        port: 5432,
+        username: 'admin',
+        password: 'dimedicadmin',
+        database: 'dimedic',
+        entities: [
+          Specialization,
+        ],
+        synchronize: false,
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

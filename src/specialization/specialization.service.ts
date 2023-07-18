@@ -8,6 +8,16 @@ import { UpdateSpecializationDto } from './dto/update-specialization.dto';
 
 @Injectable()
 export class SpecializationService {
+  constructor(
+    private readonly connection2: Connection,
+  ) {}
+
+  async getAll() {
+    return this.connection2.query(`
+      select * from specializations
+    `);
+  }
+
   private filePath = __dirname + '/specialization/specializations.json';
 
   private getData(): any[] {
