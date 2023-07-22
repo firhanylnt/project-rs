@@ -35,6 +35,8 @@ import { BloodBank } from './bloods/entities/blood.entity';
 import { Users } from './users/entities/user.entity';
 import { Appointments } from './appointments/entities/appointments.entity';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { FinanceModule } from './finance/finance.module';
+import { OpdModule } from './opd/opd.module';
 
 @Module({
   imports: [
@@ -86,6 +88,8 @@ import { AppointmentsModule } from './appointments/appointments.module';
     IpdModule,
     UsersModule,
     AssetsModule,
+    FinanceModule,
+    OpdModule,
   ],
   controllers: [AppController],
   providers: [AppService],
