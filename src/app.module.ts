@@ -35,8 +35,13 @@ import { BloodBank } from './bloods/entities/blood.entity';
 import { Users } from './users/entities/user.entity';
 import { Appointments } from './appointments/entities/appointments.entity';
 import { AppointmentsModule } from './appointments/appointments.module';
-import { FinanceModule } from './finance/finance.module';
 import { OpdModule } from './opd/opd.module';
+import { Opd } from './opd/entities/opd.entity';
+import { BillingModule } from './billing/billing.module';
+import { InvoiceModule } from './invoice/invoice.module';
+import { Billing } from './billing/entities/billing.entity';
+import { BillingDetails } from './billing/entities/billing-details.entity';
+import { Invoices } from './invoice/entities/invoices.entity';
 
 @Module({
   imports: [
@@ -68,6 +73,10 @@ import { OpdModule } from './opd/opd.module';
           Assets,
           BloodBank,
           Users,
+          Opd,
+          Billing,
+          BillingDetails,
+          Invoices,
         ],
         synchronize: false,
       }),
@@ -88,8 +97,9 @@ import { OpdModule } from './opd/opd.module';
     IpdModule,
     UsersModule,
     AssetsModule,
-    FinanceModule,
     OpdModule,
+    BillingModule,
+    InvoiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

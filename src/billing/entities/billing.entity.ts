@@ -8,11 +8,14 @@ import {
 } from 'typeorm';
 
 @Entity({
-  name: 'patients_opd',
+  name: 'billing',
 })
-export class Opd {
+export class Billing {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @PrimaryColumn()
+  code: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;

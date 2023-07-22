@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { OpdService } from './opd.service';
 import { CreateOpdDto } from './dto/create-opd.dto';
 import { UpdateOpdDto } from './dto/update-opd.dto';
@@ -22,12 +22,12 @@ export class OpdController {
     return this.opdService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Post(':id')
   update(@Param('id') id: string, @Body() updateOpdDto: UpdateOpdDto) {
     return this.opdService.update(+id, updateOpdDto);
   }
 
-  @Delete(':id')
+  @Post(':id')
   remove(@Param('id') id: string) {
     return this.opdService.remove(+id);
   }

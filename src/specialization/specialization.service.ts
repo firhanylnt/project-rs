@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
-import { Specialization } from './entities/specialization.entity'
+import { Specialization } from './entities/specialization.entity';
 import { CreateSpecializationDto } from './dto/create-specialization.dto';
 import { UpdateSpecializationDto } from './dto/update-specialization.dto';
 
@@ -22,7 +22,7 @@ export class SpecializationService {
 
   async store(data: CreateSpecializationDto) {
     const spec = new Specialization();
-    spec.name = data.name
+    spec.name = data.name;
 
     return await this.repo.save(spec);
   }
@@ -32,13 +32,13 @@ export class SpecializationService {
       where: { id: id },
     });
 
-    return spec
+    return spec;
   }
 
   async update(id, data: UpdateSpecializationDto) {
     const spec = {
       name: data.name,
-      updated_at: new Date()
+      updated_at: new Date(),
     };
 
     await this.repo.update(id, spec);
@@ -50,8 +50,8 @@ export class SpecializationService {
 
   async remove(id) {
     const result = await this.repo.delete({ id: id });
-    if (result.affected > 0) return {'message': 'Specialization deleted!'}
-    else return {'message': 'Failed to delete Specialization!'}
+    if (result.affected > 0) return { message: 'Specialization deleted!' };
+    else return { message: 'Failed to delete Specialization!' };
   }
 
   generate_code(length) {
