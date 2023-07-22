@@ -33,6 +33,8 @@ import { Medicine } from './medicine/entities/medicine.entity';
 import { Assets } from './assets/entities/asset.entity';
 import { BloodBank } from './bloods/entities/blood.entity';
 import { Users } from './users/entities/user.entity';
+import { Appointments } from './appointments/entities/appointments.entity';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { Users } from './users/entities/user.entity';
           Room,
           Ipd,
           Appointment,
+          Appointments,
           Receptionist,
           Pharmacist,
           Nurses,
@@ -72,6 +75,7 @@ import { Users } from './users/entities/user.entity';
     PatientsModule,
     SpecializationModule,
     AppointmentModule,
+    AppointmentsModule, // appointment v2
     PharmacistsModule,
     NursesModule,
     ReceptionistsModule,
