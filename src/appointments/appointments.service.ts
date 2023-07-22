@@ -69,13 +69,13 @@ export class AppointmentsService {
     if (appo != null) {
       const qr = require('qrcode'); // Import the qrcode library
 
-      const qrCodeValue = appo.id; // Get the appointment ID as the QR code value
+      const qrCodeValue = 'https://dimedic.dividefense.com/appointment-detail?appointment_id=' + appo.id; // Get the appointment ID as the QR code value
 
       // Generate the QR code image
       const qrCodeOptions = {
         errorCorrectionLevel: 'H', // High error correction level for better readability
         type: 'image/png', // You can choose other formats like 'image/jpeg', 'image/svg', etc.
-        margin: 2, // Set the QR code margin
+        margin: 3, // Set the QR code margin
       };
 
       try {
