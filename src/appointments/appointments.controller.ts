@@ -22,6 +22,11 @@ export class AppointmentsController {
     return this.appointmentService.getById(id);
   }
 
+  @Get(':id/qr')
+  generateQR(@Param('id') id: string) {
+    return this.appointmentService.generateQR(id);
+  }
+
   @Post(':id')
   update(
     @Param('id') id: string,
