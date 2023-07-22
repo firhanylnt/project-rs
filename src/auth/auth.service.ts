@@ -2,95 +2,42 @@ import { Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { readFileSync, writeFileSync } from 'fs';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Users } from 'src/users/entities/user.entity';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  private filePath = __dirname + '/auth/auth.json';
+  constructor(
+    @InjectRepository(Users)
+    private readonly repo: Repository<Users>,
+  ) {}
 
-  private getData(): any[] {
-    const jsonData = readFileSync(this.filePath, 'utf-8');
-    return JSON.parse(jsonData);
-  }
-
-  private saveData(data: any[]): void {
-    writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
-  }
-
-  create(data): void {
-    const existingData = this.getData();
-    data.id = this.generate_code(6);
-    existingData.push(data);
-    this.saveData(existingData);
-  }
-
-  login(data): object {
-    let res = {success: true, error: null, data: null}
+  async login(data): Promise<object> {
+    const res = { success: true, error: null, data: null };
 
     if (data.email == null || data.password == null) {
-      res.success = false
-      res.error = 'Email atau password tidak boleh kosong.'
-      return res
+      res.success = false;
+      res.error = 'Email atau password tidak boleh kosong.';
+      return res;
     }
 
-    const jsonData = this.getData();
-    const user = jsonData.find((item) => item.email === data.email);
-
-    if (user == null) {
-      res.success = false
-      res.error = 'Akun tidak ditemukan.'
-      return res
+    const user = await this.repo.findOne({ where: { email: data.email } });
+    console.log(user);
+    if (user === undefined) {
+      res.success = false;
+      res.error = 'Akun tidak ditemukan.';
+      return res;
     } else {
-      if (user.password != data.password) {
-        res.success = false
-        res.error = 'Password tidak sesuai.'
-        return res
+      if (await bcrypt.compare(data.password, user.password)) {
+        res.data = user;
+        return res;
+      } else {
+        res.success = false;
+        res.error = 'Password tidak sesuai.';
+        return res;
       }
-
-      res.data = user
-      return res
     }
-  }
-
-  findAll() {
-    const jsonData = this.getData();
-    return jsonData;
-  }
-
-  findOne(id: string) {
-    const jsonData = this.getData();
-    const item = jsonData.find((item) => item.id === id);
-    return item ? item : 'Item not found';
-  }
-
-  update(id: string, updatedData) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData[index] = { ...jsonData[index], ...updatedData };
-    this.saveData(jsonData);
-    return 'Data updated successfully';
-  }
-
-  remove(id: string) {
-    const jsonData = this.getData();
-    const index = jsonData.findIndex((item) => item.id === id);
-    if (index === -1) {
-      return 'Item not found';
-    }
-    jsonData.splice(index, 1);
-    this.saveData(jsonData);
-    return 'Data deleted successfully';
-  }
-
-  generate_code(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
   }
 }
