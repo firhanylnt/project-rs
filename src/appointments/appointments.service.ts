@@ -5,10 +5,13 @@ import { Appointments } from './entities/appointments.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import axios from 'axios';
+import { Receptionist } from 'src/receptionists/entities/receptionist.entity';
 
 @Injectable()
 export class AppointmentsService {
   constructor(
+    @InjectRepository(Receptionist)
+    private readonly receptionistRepo: Repository<Receptionist>,
     @InjectRepository(Appointments)
     private readonly repo: Repository<Appointments>,
     private readonly connection2: Connection,
@@ -34,8 +37,12 @@ export class AppointmentsService {
 
     const result = await this.repo.save(appo);
 
-    // TODO: send wa notification to receptionist and patient
+    // send wa notification to patient
     this.sendWaMessage(appo.phone_number, `Dear ${appo.patient_name}, your appointment request has been received. You will receive notification once your appointment is approved.`)
+
+    // send wa notification to receptionist
+    const receptionist = await this.receptionistRepo.findOne();
+    this.sendWaMessage(receptionist.phone, `Dear ${receptionist.first_name}, you have an appointment request by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointments/${result.id}`)
 
     return result
   }
