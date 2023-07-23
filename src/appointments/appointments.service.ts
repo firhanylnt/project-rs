@@ -17,8 +17,29 @@ export class AppointmentsService {
     private readonly connection2: Connection,
   ) {}
 
-  days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-  months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+  days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
 
   async getAll(userId = null, email = null) {
     return this.connection2.query(`
@@ -26,8 +47,13 @@ export class AppointmentsService {
         left join specializations as s on a.specialization_id = s.id
         left join doctors as d on a.doctor_id = d.id
         left join users as du on d.user_id = du.id
-        ${email !== null ? `where a.email = '${email}'` : ``}
-        ${userId !== null ? `where du.id = ${userId}` : ``}
+        ${
+          email !== null
+            ? `where a.email = '${email}'`
+            : userId !== null
+            ? `where du.id = ${userId}`
+            : ``
+        }
         order by created_at desc
     `);
   }
@@ -44,17 +70,23 @@ export class AppointmentsService {
     appo.appointment_date = data.appointment_date;
     appo.description = data.description;
     appo.is_approved = false;
-    if (data.is_approved != null) appo.is_approved = data.is_approved
+    if (data.is_approved != null) appo.is_approved = data.is_approved;
 
     const result = await this.repo.save(appo);
 
     if (result.is_approved === false) {
       // send wa notification to patient
-      this.sendWaMessage(appo.phone_number, `Dear ${appo.patient_name}, your appointment request has been received. You will receive notification once your appointment is approved.`)
+      this.sendWaMessage(
+        appo.phone_number,
+        `Dear ${appo.patient_name}, your appointment request has been received. You will receive notification once your appointment is approved.`,
+      );
 
       // send wa notification to receptionist
       const receptionist = await this.receptionistRepo.findOne();
-      this.sendWaMessage(receptionist.phone, `Dear ${receptionist.first_name}, you have an appointment request by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${result.id}/view`)
+      this.sendWaMessage(
+        receptionist.phone,
+        `Dear ${receptionist.first_name}, you have an appointment request by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${result.id}/view`,
+      );
     } else if (result.is_approved === true && result.doctor_id !== null) {
       const doctor = await this.connection2.query(`
       select d.name, d.phone from doctors as d
@@ -66,15 +98,25 @@ export class AppointmentsService {
     `);
 
       // send wa notification to patient
-      const appoDate = new Date(data.appointment_date)
-      const appoDateStr = `${this.days[appoDate.getUTCDay()]}, ${appoDate.getUTCDate()} ${this.months[appoDate.getUTCMonth()]} ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours()}:${appoDate.getUTCMinutes()} (UTC)`
-      this.sendWaMessage(appo.phone_number, `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`)
+      const appoDate = new Date(data.appointment_date);
+      const appoDateStr = `${
+        this.days[appoDate.getUTCDay()]
+      }, ${appoDate.getUTCDate()} ${
+        this.months[appoDate.getUTCMonth()]
+      } ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours()}:${appoDate.getUTCMinutes()} (UTC)`;
+      this.sendWaMessage(
+        appo.phone_number,
+        `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`,
+      );
 
       // send wa notification to doctor
-      this.sendWaMessage(doctor[0].phone, `Dear ${doctor[0].name}, you have an appointment by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${result.id}/view`)
+      this.sendWaMessage(
+        doctor[0].phone,
+        `Dear ${doctor[0].name}, you have an appointment by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${result.id}/view`,
+      );
     }
 
-    return result
+    return result;
   }
 
   async getById(id) {
@@ -109,7 +151,9 @@ export class AppointmentsService {
     if (appo != null) {
       const qr = require('qrcode');
 
-      const qrCodeValue = 'https://dimedic.dividefense.com/appointment-detail?appointment_id=' + appo.id;
+      const qrCodeValue =
+        'https://dimedic.dividefense.com/appointment-detail?appointment_id=' +
+        appo.id;
 
       // Generate the QR code image
       const qrCodeOptions = {
@@ -143,7 +187,7 @@ export class AppointmentsService {
       description: data.description,
       is_approved: data.is_approved,
       is_need_opd: data.is_need_opd,
-      updated_at: new Date()
+      updated_at: new Date(),
     };
 
     await this.repo.update(id, appo);
@@ -152,8 +196,11 @@ export class AppointmentsService {
       if (appo.is_need_opd === true) {
         // send wa notification to receptionist
         const receptionist = await this.receptionistRepo.findOne();
-        this.sendWaMessage(receptionist.phone, `Dear ${receptionist.first_name}, Appointment *${id}* by ${appo.patient_name} is need an OPD. Please check below link for the detail.\n\nhttps://fe-dimedic.dividefense.com/appointment/${id}/view`)
-      }  
+        this.sendWaMessage(
+          receptionist.phone,
+          `Dear ${receptionist.first_name}, Appointment *${id}* by ${appo.patient_name} is need an OPD. Please check below link for the detail.\n\nhttps://fe-dimedic.dividefense.com/appointment/${id}/view`,
+        );
+      }
     } else {
       if (appo.is_approved === true && appo.doctor_id !== null) {
         const doctor = await this.connection2.query(`
@@ -166,12 +213,22 @@ export class AppointmentsService {
         `);
 
         // send wa notification to patient
-        const appoDate = new Date(data.appointment_date)
-        const appoDateStr = `${this.days[appoDate.getUTCDay()]}, ${appoDate.getUTCDate()} ${this.months[appoDate.getUTCMonth()]} ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours()}:${appoDate.getUTCMinutes()} (UTC)`
-        this.sendWaMessage(appo.phone_number, `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`)
+        const appoDate = new Date(data.appointment_date);
+        const appoDateStr = `${
+          this.days[appoDate.getUTCDay()]
+        }, ${appoDate.getUTCDate()} ${
+          this.months[appoDate.getUTCMonth()]
+        } ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours()}:${appoDate.getUTCMinutes()} (UTC)`;
+        this.sendWaMessage(
+          appo.phone_number,
+          `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`,
+        );
 
         // send wa notification to doctor
-        this.sendWaMessage(doctor[0].phone, `Dear ${doctor[0].name}, you have an appointment by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${id}/view`)
+        this.sendWaMessage(
+          doctor[0].phone,
+          `Dear ${doctor[0].name}, you have an appointment by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${id}/view`,
+        );
       }
     }
 
@@ -182,8 +239,8 @@ export class AppointmentsService {
 
   async remove(id) {
     const result = await this.repo.delete({ id: id });
-    if (result.affected > 0) return { 'message': 'Appointment deleted!' }
-    else return { 'message': 'Failed to delete Appointment!' }
+    if (result.affected > 0) return { message: 'Appointment deleted!' };
+    else return { message: 'Failed to delete Appointment!' };
   }
 
   generateID(length) {
@@ -209,7 +266,8 @@ export class AppointmentsService {
 
     const apiUrl = 'https://app.ruangwa.id/api/send_message';
 
-    axios.post(apiUrl, data)
+    axios
+      .post(apiUrl, data)
       .then((response) => {
         console.log('Response:', response.data);
       })
