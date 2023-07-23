@@ -14,8 +14,8 @@ export class AppointmentsController {
 
   @Get()
   findAll(@Query() query: any) {
-    const { user_id } = query;
-    return this.appointmentService.getAll(user_id);
+    const { user_id, email } = query;
+    return this.appointmentService.getAll(user_id, email);
   }
 
   @Get(':id')
