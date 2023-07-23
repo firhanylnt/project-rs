@@ -67,7 +67,7 @@ export class AppointmentsService {
 
       // send wa notification to patient
       const appoDate = new Date(data.appointment_date)
-      const appoDateStr = `${this.days[appoDate.getUTCDay()]}, ${appoDate.getUTCDate()} ${this.months[appoDate.getUTCMonth()]} ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours()}:${appoDate.getUTCMinutes()} (UTC)`
+      const appoDateStr = `${this.days[appoDate.getUTCDay()]}, ${appoDate.getUTCDate()} ${this.months[appoDate.getUTCMonth()]} ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours() < 10 ? '0' + appoDate.getUTCHours() : appoDate.getUTCHours()}:${appoDate.getUTCMinutes() < 10 ? '0' + appoDate.getUTCMinutes() : appoDate.getUTCMinutes()} (UTC)`
       this.sendWaMessage(appo.phone_number, `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`)
 
       // send wa notification to doctor
@@ -169,7 +169,7 @@ export class AppointmentsService {
 
         // send wa notification to patient
         const appoDate = new Date(data.appointment_date)
-        const appoDateStr = `${this.days[appoDate.getUTCDay()]}, ${appoDate.getUTCDate()} ${this.months[appoDate.getUTCMonth()]} ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours()}:${appoDate.getUTCMinutes()} (UTC)`
+        const appoDateStr = `${this.days[appoDate.getUTCDay()]}, ${appoDate.getUTCDate()} ${this.months[appoDate.getUTCMonth()]} ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours() < 10 ? '0' + appoDate.getUTCHours() : appoDate.getUTCHours()}:${appoDate.getUTCMinutes() < 10 ? '0' + appoDate.getUTCMinutes() : appoDate.getUTCMinutes()} (UTC)`
         this.sendWaMessage(appo.phone_number, `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`)
 
         // send wa notification to doctor
