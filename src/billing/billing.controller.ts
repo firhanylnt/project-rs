@@ -1,15 +1,14 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { BillingService } from './billing.service';
-import { CreateBillingDto } from './dto/create-billing.dto';
-import { UpdateBillingDto } from './dto/update-billing.dto';
+import { BillingDTO } from './dto/create-billing.dto';
 
 @Controller('billing')
 export class BillingController {
   constructor(private readonly billingService: BillingService) {}
 
   @Post()
-  create(@Body() createBillingDto: CreateBillingDto) {
-    return this.billingService.create(createBillingDto);
+  create(@Body() data: BillingDTO) {
+    return this.billingService.store(data);
   }
 
   @Get()
@@ -17,15 +16,15 @@ export class BillingController {
     return this.billingService.findAll();
   }
 
-  @Get(':id')
+  @Get('view/:id')
   findOne(@Param('id') id: string) {
     return this.billingService.findOne(id);
   }
 
-  @Post(':id')
-  update(@Param('id') id: string, @Body() updateBillingDto: UpdateBillingDto) {
-    return this.billingService.update(id, updateBillingDto);
-  }
+  // @Post(':id')
+  // update(@Param('id') id: string, @Body() updateBillingDto: BillingDTO) {
+  //   return this.billingService.update(id, updateBillingDto);
+  // }
 
   @Post('delete/:id')
   remove(@Param('id') id: string) {

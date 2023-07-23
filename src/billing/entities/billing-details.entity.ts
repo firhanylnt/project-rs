@@ -22,10 +22,10 @@ export class BillingDetails {
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   price: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   subtotal: number;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
