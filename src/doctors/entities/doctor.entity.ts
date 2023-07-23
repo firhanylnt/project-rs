@@ -29,9 +29,6 @@ export class Doctor {
   gender: string;
 
   @Column()
-  email: string;
-
-  @Column()
   phone: string;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })

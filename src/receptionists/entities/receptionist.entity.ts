@@ -29,9 +29,6 @@ export class Receptionist {
   phone: string;
 
   @Column()
-  email: string;
-
-  @Column()
   dob: Date;
 
   @Column()

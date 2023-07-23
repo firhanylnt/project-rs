@@ -29,9 +29,6 @@ export class Patient {
   dob: Date;
 
   @Column()
-  email: string;
-
-  @Column()
   phone: string;
 
   @Column()
