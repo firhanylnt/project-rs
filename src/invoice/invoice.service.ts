@@ -62,6 +62,15 @@ export class InvoiceService {
     };
   }
 
+  async findByUser(id) {
+    return await this.connection.query(`
+    select i.id, concat(p.first_name, ' ', p.last_name) as name, i.code, i.invoice_date, i.total_amount, i.type
+    from invoices i
+    join patients p on p.id = i.patient_id
+    where p.user_id = ${id}
+  `);
+  }
+
   async update(id, data) {
     const invoice = {
       patient_id: data.patient_id,
