@@ -10,6 +10,8 @@ import {
 import { IpdService } from './ipd.service';
 import { CreateIpdDto } from './dto/create-ipd.dto';
 import { UpdateIpdDto } from './dto/update-ipd.dto';
+import { DiagnosisDTO } from './dto/diagnosis.dto';
+import { MedicineDTO } from './dto/medicine.dto';
 
 @Controller('ipd')
 export class IpdController {
@@ -20,6 +22,16 @@ export class IpdController {
     return this.ipdService.store(createIpdDto);
   }
 
+  @Post('add-diagnosis/:id')
+  create_diagnosis(@Param('id') id: string, @Body() data: DiagnosisDTO) {
+    return this.ipdService.store_diagnosis(id, data);
+  }
+
+  @Post('add-medicine/:id')
+  create_medicine(@Param('id') id: string, @Body() data: MedicineDTO) {
+    return this.ipdService.store_medicine(id, data);
+  }
+
   @Get()
   findAll() {
     return this.ipdService.getAll();
@@ -28,6 +40,16 @@ export class IpdController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ipdService.getById(id);
+  }
+
+  @Get('diagnosis/:id')
+  get_diagnosis(@Param('id') id: string) {
+    return this.ipdService.get_diagnosis_by_ipd(id);
+  }
+
+  @Get('medicine/:id')
+  get_medicine(@Param('id') id: string) {
+    return this.ipdService.get_medicine_by_ipd(id);
   }
 
   @Post(':id')

@@ -42,6 +42,8 @@ import { InvoiceModule } from './invoice/invoice.module';
 import { Billing } from './billing/entities/billing.entity';
 import { BillingDetails } from './billing/entities/billing-details.entity';
 import { Invoices } from './invoice/entities/invoices.entity';
+import { PatientIpdDiagnosis } from './ipd/entities/ipd-diagnosis.entity';
+import { PatientIpdmedicine } from './ipd/entities/ipd-medicine.entity';
 
 @Module({
   imports: [
@@ -77,6 +79,8 @@ import { Invoices } from './invoice/entities/invoices.entity';
           Billing,
           BillingDetails,
           Invoices,
+          PatientIpdDiagnosis,
+          PatientIpdmedicine,
         ],
         synchronize: false,
       }),

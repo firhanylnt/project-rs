@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { BillingService } from './billing.service';
 import { CreateBillingDto } from './dto/create-billing.dto';
 import { UpdateBillingDto } from './dto/update-billing.dto';
@@ -19,16 +19,16 @@ export class BillingController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.billingService.findOne(+id);
+    return this.billingService.findOne(id);
   }
 
-  @Patch(':id')
+  @Post(':id')
   update(@Param('id') id: string, @Body() updateBillingDto: UpdateBillingDto) {
-    return this.billingService.update(+id, updateBillingDto);
+    return this.billingService.update(id, updateBillingDto);
   }
 
-  @Delete(':id')
+  @Post('delete/:id')
   remove(@Param('id') id: string) {
-    return this.billingService.remove(+id);
+    return this.billingService.remove(id);
   }
 }
