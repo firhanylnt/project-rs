@@ -19,7 +19,10 @@ export class AppointmentsService {
 
   async getAll() {
     return this.connection2.query(`
-      select * from appointments_v2
+      select a.*, s.name as specialization, d.name as doctor from appointments_v2 as a
+      left join specializations as s on a.specialization_id = s.id
+      left join doctors as d on a.doctor_id = d.id
+      order by created_at desc
     `);
   }
 
