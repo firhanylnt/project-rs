@@ -36,14 +36,6 @@ export class AppointmentsController {
     return this.appointmentService.update(id, updateAppointmentDto);
   }
 
-  @Post(':id/update-opd')
-  updateOpd(
-    @Param('id') id: string,
-    @Body() updateAppointmentDto: UpdateAppointmentDto,
-  ) {
-    return this.appointmentService.updateNeedOpdStatus(id, updateAppointmentDto);
-  }
-
   @Post('delete/:id')
   remove(@Param('id') id: string) {
     return this.appointmentService.remove(id);
