@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { TrmService } from './trm.service';
 import { CreateTrmDto } from './dto/create-trm.dto';
 import { UpdateTrmDto } from './dto/update-trm.dto';
@@ -7,11 +15,6 @@ import { UpdateTrmDto } from './dto/update-trm.dto';
 export class TrmController {
   constructor(private readonly trmService: TrmService) {}
 
-  @Post()
-  create(@Body() createTrmDto: CreateTrmDto) {
-    return this.trmService.create(createTrmDto);
-  }
-
   @Get()
   findAll() {
     return this.trmService.findAll();
@@ -19,16 +22,16 @@ export class TrmController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.trmService.findOne(+id);
+    return this.trmService.findByUser(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTrmDto: UpdateTrmDto) {
-    return this.trmService.update(+id, updateTrmDto);
+    return this.trmService.update(id, updateTrmDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.trmService.remove(+id);
+    return this.trmService.remove(id);
   }
 }
