@@ -44,6 +44,7 @@ import { BillingDetails } from './billing/entities/billing-details.entity';
 import { Invoices } from './invoice/entities/invoices.entity';
 import { PatientIpdDiagnosis } from './ipd/entities/ipd-diagnosis.entity';
 import { PatientIpdmedicine } from './ipd/entities/ipd-medicine.entity';
+import { TrmModule } from './trm/trm.module';
 
 @Module({
   imports: [
@@ -104,6 +105,7 @@ import { PatientIpdmedicine } from './ipd/entities/ipd-medicine.entity';
     OpdModule,
     BillingModule,
     InvoiceModule,
+    TrmModule,
   ],
   controllers: [AppController],
   providers: [AppService],

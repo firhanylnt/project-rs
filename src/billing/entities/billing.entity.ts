@@ -20,9 +20,12 @@ export class Billing {
   patient_id: string;
 
   @Column()
-  billing_date: Date;
+  type: string;
 
   @Column()
+  billing_date: Date;
+
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   total_amount: number;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })

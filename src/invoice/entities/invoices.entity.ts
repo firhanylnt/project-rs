@@ -23,8 +23,11 @@ export class Invoices {
   @Column()
   billing_id: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   amount_paid: number;
+
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  total_amount: number;
 
   @Column()
   payment_date: Date;
