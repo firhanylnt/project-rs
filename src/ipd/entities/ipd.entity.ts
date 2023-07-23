@@ -46,6 +46,10 @@ export class Ipd {
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => "NOW()", onUpdate: "NOW()" })
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'NOW()',
+    onUpdate: 'NOW()',
+  })
   updated_at: Date;
 }

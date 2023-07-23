@@ -8,27 +8,27 @@ export class OpdController {
   constructor(private readonly opdService: OpdService) {}
 
   @Post()
-  create(@Body() createOpdDto: CreateOpdDto) {
-    return this.opdService.create(createOpdDto);
+  create(@Body() createIpdDto: CreateOpdDto) {
+    return this.opdService.store(createIpdDto);
   }
 
   @Get()
   findAll() {
-    return this.opdService.findAll();
+    return this.opdService.getAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.opdService.findOne(+id);
+    return this.opdService.getById(id);
   }
 
   @Post(':id')
   update(@Param('id') id: string, @Body() updateOpdDto: UpdateOpdDto) {
-    return this.opdService.update(+id, updateOpdDto);
+    return this.opdService.update(id, updateOpdDto);
   }
 
-  @Post(':id')
+  @Post('delete/:id')
   remove(@Param('id') id: string) {
-    return this.opdService.remove(+id);
+    return this.opdService.remove(id);
   }
 }

@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -11,8 +10,35 @@ import {
   name: 'patients_opd',
 })
 export class Opd {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: string;
+
+  @Column()
+  patient_id: string;
+
+  @Column()
+  blood_pressure: string;
+
+  @Column()
+  height: number;
+
+  @Column()
+  weight: number;
+
+  @Column()
+  admission_date: Date;
+
+  @Column()
+  payment_method: string;
+
+  @Column()
+  symptoms: string;
+
+  @Column()
+  notes: string;
+
+  @Column()
+  is_active: boolean;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;

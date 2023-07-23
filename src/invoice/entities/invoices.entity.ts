@@ -14,8 +14,23 @@ export class Invoices {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @PrimaryColumn()
+  @Column()
   code: string;
+
+  @Column()
+  patient_id: string;
+
+  @Column()
+  billing_id: number;
+
+  @Column()
+  amount_paid: number;
+
+  @Column()
+  payment_date: Date;
+
+  @Column()
+  status: boolean;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;

@@ -2,31 +2,29 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({
-  name: 'billing_details',
+  name: 'patients_ipd_medicine',
 })
-export class BillingDetails {
+export class PatientIpdmedicine {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  billing_id: number;
+  patient_ipd_id: string;
 
   @Column()
-  item_name: string;
+  description: string;
 
   @Column()
-  quantity: number;
+  report_date: string;
 
   @Column()
-  price: number;
-
-  @Column()
-  subtotal: number;
+  created_by: number;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;
