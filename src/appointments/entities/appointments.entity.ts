@@ -40,6 +40,9 @@ export class Appointments {
   @Column()
   is_approved: boolean;
 
+  @Column()
+  is_need_opd: boolean;
+
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;
 

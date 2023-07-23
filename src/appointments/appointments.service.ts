@@ -73,7 +73,6 @@ export class AppointmentsService {
 
       // send wa notification to doctor
       this.sendWaMessage(doctor[0].phone, `Dear ${doctor[0].name}, you have an appointment by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${result.id}`)
-
     }
 
     return result
@@ -143,33 +142,63 @@ export class AppointmentsService {
       appointment_date: data.appointment_date,
       description: data.description,
       is_approved: data.is_approved,
+      is_need_opd: data.is_need_opd,
       updated_at: new Date()
     };
 
     await this.repo.update(id, appo);
 
-    if (appo.is_approved === true && appo.doctor_id !== null) {
-      const doctor = await this.connection2.query(`
-        select d.name, d.phone from doctors as d
-        where d.id = '${appo.doctor_id}'
-      `);
-      const specialization = await this.connection2.query(`
-        select s.name from specializations as s
-        where s.id = ${appo.specialization_id}
-      `);
+    if (appo.is_need_opd != null) {
+      if (appo.is_need_opd === true) {
+        // send wa notification to receptionist
+        const receptionist = await this.receptionistRepo.findOne();
+        this.sendWaMessage(receptionist.phone, `Dear ${receptionist.first_name}, Appointment *${id}* by ${appo.patient_name} is need an OPD. Please check below link for the detail.\n\nhttps://fe-dimedic.dividefense.com/appointment/${id}`)
+      }  
+    } else {
+      if (appo.is_approved === true && appo.doctor_id !== null) {
+        const doctor = await this.connection2.query(`
+          select d.name, d.phone from doctors as d
+          where d.id = '${appo.doctor_id}'
+        `);
+        const specialization = await this.connection2.query(`
+          select s.name from specializations as s
+          where s.id = ${appo.specialization_id}
+        `);
 
-      // send wa notification to patient
-      const appoDate = new Date(data.appointment_date)
-      const appoDateStr = `${this.days[appoDate.getUTCDay()]}, ${appoDate.getUTCDate()} ${this.months[appoDate.getUTCMonth()]} ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours()}:${appoDate.getUTCMinutes()} (UTC)`
-      this.sendWaMessage(appo.phone_number, `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`)
+        // send wa notification to patient
+        const appoDate = new Date(data.appointment_date)
+        const appoDateStr = `${this.days[appoDate.getUTCDay()]}, ${appoDate.getUTCDate()} ${this.months[appoDate.getUTCMonth()]} ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours()}:${appoDate.getUTCMinutes()} (UTC)`
+        this.sendWaMessage(appo.phone_number, `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`)
 
-      // send wa notification to doctor
-      this.sendWaMessage(doctor[0].phone, `Dear ${doctor[0].name}, you have an appointment by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${id}`)
+        // send wa notification to doctor
+        this.sendWaMessage(doctor[0].phone, `Dear ${doctor[0].name}, you have an appointment by ${appo.patient_name}. Please check below link for the detail of the appointment.\n\nhttps://fe-dimedic.dividefense.com/appointment/${id}`)
+      }
     }
 
     return await this.repo.findOne({
       where: { id: id },
     });
+  }
+
+  async updateNeedOpdStatus(id, data: UpdateAppointmentDto) {
+    const appo = {
+      is_need_opd: data.is_need_opd,
+      updated_at: new Date()
+    };
+
+    await this.repo.update(id, appo);
+
+    const updatedAppo = await this.repo.findOne({
+      where: { id: id },
+    });
+
+    if (appo.is_need_opd === true) {
+      // send wa notification to receptionist
+      const receptionist = await this.receptionistRepo.findOne();
+      this.sendWaMessage(receptionist.phone, `Dear ${receptionist.first_name}, Appointment *${updatedAppo.id}* by ${updatedAppo.patient_name} is need an OPD. Please check below link for the detail.\n\nhttps://fe-dimedic.dividefense.com/appointment/${updatedAppo.id}`)
+    }
+
+    return updatedAppo
   }
 
   async remove(id) {
