@@ -93,7 +93,7 @@ export class AppointmentsService {
       .addSelect('a.is_approved', 'is_approved')
       .addSelect('a.is_need_opd', 'is_need_opd')
       .from('appointments_v2', 'a')
-      .innerJoin('specializations', 's', 'a.specialization_id = s.id')
+      .leftJoin('specializations', 's', 'a.specialization_id = s.id')
       .leftJoin('doctors', 'd', 'a.doctor_id = d.id')
       .where('a.id = :id', { id: id })
       .limit(1)
