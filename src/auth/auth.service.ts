@@ -56,7 +56,8 @@ export class AuthService {
 
     await this.repoPatient.save(patient);
 
-    return result
+    res.data = result
+    return res
   }
 
   async login(data): Promise<object> {
