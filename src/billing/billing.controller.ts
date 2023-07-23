@@ -16,7 +16,7 @@ export class BillingController {
     return this.billingService.findAll();
   }
 
-  @Get(':id')
+  @Get('view/:id')
   findOne(@Param('id') id: string) {
     return this.billingService.findOne(id);
   }
