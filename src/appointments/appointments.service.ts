@@ -22,13 +22,18 @@ export class AppointmentsService {
 
   async getAll(userId = null, email = null) {
     return this.connection2.query(`
-        select a.*, s.name as specialization, d.name as doctor from appointments_v2 as a
-        left join specializations as s on a.specialization_id = s.id
-        left join doctors as d on a.doctor_id = d.id
-        left join users as du on d.user_id = du.id
-        ${email !== null ? `where a.email = '${email}'` : ``}
-        ${userId !== null ? `where du.id = ${userId}` : ``}
-        order by created_at desc
+      select a.*, s.name as specialization, d.name as doctor from appointments_v2 as a
+      left join specializations as s on a.specialization_id = s.id
+      left join doctors as d on a.doctor_id = d.id
+      left join users as du on d.user_id = du.id
+      ${
+        email !== null
+          ? `where a.email = '${email}'`
+          : userId !== null
+          ? `where du.id = ${userId}`
+          : ``
+      }
+      order by created_at desc
     `);
   }
 
