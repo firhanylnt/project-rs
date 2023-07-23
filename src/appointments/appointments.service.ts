@@ -15,33 +15,21 @@ export class AppointmentsService {
     @InjectRepository(Appointments)
     private readonly repo: Repository<Appointments>,
     private readonly connection2: Connection,
-  ) { }
+  ) {}
 
   days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
   async getAll(userId = null, email = null) {
-    let whereQuery = ''
-    if (userId != null) whereQuery = 'where du.id = ' + userId
-    if (email !== null) {
-      return this.connection2.query(`
+    return this.connection2.query(`
         select a.*, s.name as specialization, d.name as doctor from appointments_v2 as a
         left join specializations as s on a.specialization_id = s.id
         left join doctors as d on a.doctor_id = d.id
         left join users as du on d.user_id = du.id
-        where a.email = '${email}'
+        ${email !== null ? `where a.email = '${email}'` : ``}
+        ${userId !== null ? `where du.id = ${userId}` : ``}
         order by created_at desc
-      `);
-    } else {
-      return this.connection2.query(`
-        select a.*, s.name as specialization, d.name as doctor from appointments_v2 as a
-        left join specializations as s on a.specialization_id = s.id
-        left join doctors as d on a.doctor_id = d.id
-        left join users as du on d.user_id = du.id
-        ${whereQuery}
-        order by created_at desc
-      `);
-    }
+    `);
   }
 
   async store(data: CreateAppointmentDto) {
