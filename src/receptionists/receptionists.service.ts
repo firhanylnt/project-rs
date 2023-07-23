@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { CreateReceptionistDto } from './dto/create-receptionist.dto';
 import { UpdateReceptionistDto } from './dto/update-receptionist.dto';
 import { Receptionist } from './entities/receptionist.entity';
@@ -10,6 +10,7 @@ export class ReceptionistsService {
   constructor(
     @InjectRepository(Receptionist)
     private readonly repo: Repository<Receptionist>,
+    private readonly connection2: Connection,
   ) {}
 
   async getAll() {
@@ -30,11 +31,17 @@ export class ReceptionistsService {
   }
 
   async getById(id) {
-    const src = await this.repo.findOne({
-      where: { id: id },
-    });
+    const queryResult = await this.connection2
+    .createQueryBuilder()
+    .select('r.*')
+    .addSelect('u.email', 'user')
+    .from('receptionist', 'r')
+    .innerJoin('users', 'u', 'r.user_id = u.id')
+    .where('r.id = :id', { id: id }) 
+    .limit(1)
+    .getRawOne();
 
-    return src;
+    return queryResult;
   }
 
   async update(id, data: UpdateReceptionistDto) {

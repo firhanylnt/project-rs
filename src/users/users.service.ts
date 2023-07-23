@@ -13,8 +13,11 @@ export class UsersService {
     private readonly repo: Repository<Users>,
   ) {}
 
-  async getAll() {
-    return this.repo.find();
+  async getAll(filterRole = null) {
+    if (filterRole === null) return this.repo.find();
+    else return this.repo.find({
+      where: {role: filterRole}
+    })
   }
 
   async store(data: CreateUserDto) {
