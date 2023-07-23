@@ -18,12 +18,12 @@ export class ReceptionistsService {
 
   async store(data: CreateReceptionistDto) {
     const src = new Receptionist();
+    src.user_id = data.user_id;
     src.first_name = data.first_name;
     src.last_name = data.last_name;
     src.dob = data.dob;
     src.gender = data.gender;
     src.phone = data.phone;
-    src.email = data.email;
     src.address = data.address;
 
     return await this.repo.save(src);
@@ -39,12 +39,12 @@ export class ReceptionistsService {
 
   async update(id, data: UpdateReceptionistDto) {
     const src = {
+      user_id: data.user_id,
       first_name: data.first_name,
       last_name: data.last_name,
       dob: data.dob,
       gender: data.gender,
       phone: data.phone,
-      email: data.email,
       address: data.address,
       updated_at: new Date(),
     };

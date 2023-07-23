@@ -14,6 +14,9 @@ export class Patient {
   id: string;
 
   @Column()
+  user_id: number;
+
+  @Column()
   first_name: string;
 
   @Column()

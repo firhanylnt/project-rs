@@ -22,11 +22,11 @@ export class PatientsService {
   async store(data: CreatePatientDto) {
     const patient = new Patient();
     patient.id = this.generateID(6)
+    patient.user_id = data.user_id
     patient.first_name = data.first_name
     patient.last_name = data.last_name
     patient.gender = data.gender
     patient.dob = data.dob
-    patient.email = data.email
     patient.phone = data.phone
     patient.address = data.address
 
@@ -43,11 +43,11 @@ export class PatientsService {
 
   async update(id, data: UpdatePatientDto) {
     const patient = {
+      user_id: data.user_id,
       first_name: data.first_name,
       last_name: data.last_name,
       gender: data.gender,
       dob: data.dob,
-      email: data.email,
       phone: data.phone,
       address: data.address,
       updated_at: new Date()

@@ -26,11 +26,11 @@ export class DoctorsService {
   async store(data: CreateDoctorDto) {
     const doc = new Doctor();
     doc.id = this.generateID(6)
+    doc.user_id = data.user_id
     doc.specialization_id = data.specialization_id
     doc.name = data.name
     doc.dob = data.dob
     doc.gender = data.gender
-    doc.email = data.email
     doc.phone = data.phone
 
     return await this.repo.save(doc);
@@ -45,7 +45,6 @@ export class DoctorsService {
     .addSelect('d.name', 'name')
     .addSelect('d.dob', 'dob')
     .addSelect('d.gender', 'gender')
-    .addSelect('d.email', 'email')
     .addSelect('d.phone', 'phone')
     .addSelect('d.created_at', 'created_at')
     .addSelect('d.updated_at', 'updated_at')
@@ -60,11 +59,11 @@ export class DoctorsService {
 
   async update(id, data: UpdateDoctorDto) {
     const doc = {
+      user_id: data.user_id,
       specialization_id: data.specialization_id,
       name: data.name,
       dob: data.dob,
       gender: data.gender,
-      email: data.email,
       phone: data.phone,
       updated_at: new Date()
     };

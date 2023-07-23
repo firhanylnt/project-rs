@@ -14,6 +14,9 @@ export class Doctor {
   id: string;
 
   @Column()
+  user_id: number;
+
+  @Column()
   specialization_id: number;
 
   @Column()
