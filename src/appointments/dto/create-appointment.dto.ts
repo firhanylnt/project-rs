@@ -7,4 +7,5 @@ export class CreateAppointmentDto {
   patient_gender: string;
   appointment_date: Date;
   description: string;
+  is_approved: boolean;
 }
