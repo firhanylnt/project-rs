@@ -1,8 +1,8 @@
-export class CreateInvoiceDto {
-  code: string;
-  billing_id: number;
+export class InvoiceDto {
   patient_id: string;
-  amount_paid: number;
-  payment_date: string;
+  total_amount: number;
+  type: string;
+  payment_method: string;
   status: boolean;
+  details: [];
 }

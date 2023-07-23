@@ -1,15 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
-import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { InvoiceDto } from './dto/create-invoice.dto';
 
 @Controller('invoice')
 export class InvoiceController {
   constructor(private readonly invoiceService: InvoiceService) {}
 
   @Post()
-  create(@Body() createInvoiceDto: CreateInvoiceDto) {
-    return this.invoiceService.create(createInvoiceDto);
+  create(@Body() data: InvoiceDto) {
+    return this.invoiceService.store(data);
   }
 
   @Get()
@@ -17,18 +16,18 @@ export class InvoiceController {
     return this.invoiceService.findAll();
   }
 
-  @Get(':id')
+  @Get('view/:id')
   findOne(@Param('id') id: string) {
-    return this.invoiceService.findOne(+id);
+    return this.invoiceService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateInvoiceDto: UpdateInvoiceDto) {
-    return this.invoiceService.update(+id, updateInvoiceDto);
+  @Post(':id')
+  update(@Param('id') id: string, @Body() data: InvoiceDto) {
+    return this.invoiceService.update(id, data);
   }
 
-  @Delete(':id')
+  @Post('delete/:id')
   remove(@Param('id') id: string) {
-    return this.invoiceService.remove(+id);
+    return this.invoiceService.remove(id);
   }
 }

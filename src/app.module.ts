@@ -37,14 +37,12 @@ import { Appointments } from './appointments/entities/appointments.entity';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { OpdModule } from './opd/opd.module';
 import { Opd } from './opd/entities/opd.entity';
-import { BillingModule } from './billing/billing.module';
 import { InvoiceModule } from './invoice/invoice.module';
-import { Billing } from './billing/entities/billing.entity';
-import { BillingDetails } from './billing/entities/billing-details.entity';
 import { Invoices } from './invoice/entities/invoices.entity';
 import { PatientIpdDiagnosis } from './ipd/entities/ipd-diagnosis.entity';
 import { PatientIpdmedicine } from './ipd/entities/ipd-medicine.entity';
 import { TrmModule } from './trm/trm.module';
+import { InvoiceDetails } from './invoice/entities/invoice-details.entity';
 
 @Module({
   imports: [
@@ -77,11 +75,11 @@ import { TrmModule } from './trm/trm.module';
           BloodBank,
           Users,
           Opd,
-          Billing,
-          BillingDetails,
           Invoices,
           PatientIpdDiagnosis,
           PatientIpdmedicine,
+          InvoiceDetails,
+          Invoices,
         ],
         synchronize: false,
       }),
@@ -103,7 +101,6 @@ import { TrmModule } from './trm/trm.module';
     UsersModule,
     AssetsModule,
     OpdModule,
-    BillingModule,
     InvoiceModule,
     TrmModule,
   ],
