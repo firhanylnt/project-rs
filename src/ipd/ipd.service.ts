@@ -64,6 +64,7 @@ export class IpdService {
     medicine.patient_ipd_id = id;
     medicine.medicine_category = data.medicine_category;
     medicine.medicine_id = data.medicine_id;
+    medicine.quantity = data.quantity;
     medicine.dosage = data.dosage;
     medicine.instruction = data.instruction;
     medicine.created_by = data.created_by;

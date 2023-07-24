@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { OpdService } from './opd.service';
 import { CreateOpdDto } from './dto/create-opd.dto';
 import { UpdateOpdDto } from './dto/update-opd.dto';
+import { MedicineDTO } from './dto/medicine.dto';
 
 @Controller('opd')
 export class OpdController {
@@ -20,6 +21,16 @@ export class OpdController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.opdService.getById(id);
+  }
+
+  @Get('medicine/:id')
+  get_medicine(@Param('id') id: string) {
+    return this.opdService.get_medicine_by_opd(id);
+  }
+
+  @Post('add-medicine/:id')
+  create_medicine(@Param('id') id: string, @Body() data: MedicineDTO) {
+    return this.opdService.store_medicine(id, data);
   }
 
   @Post(':id')

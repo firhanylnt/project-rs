@@ -2,20 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({
-  name: 'patients_ipd_medicine',
+  name: 'patients_opd_medicine',
 })
-export class PatientIpdmedicine {
+export class PatientOpdmedicine {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  patient_ipd_id: string;
+  patient_opd_id: string;
 
   @Column()
   medicine_category: number;

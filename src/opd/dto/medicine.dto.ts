@@ -1,5 +1,5 @@
 export class MedicineDTO {
-  patient_ipd_id: string;
+  patient_opd_id: string;
   created_by: number;
   dosage: string;
   instruction: string;

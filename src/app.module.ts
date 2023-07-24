@@ -45,6 +45,7 @@ import { TrmModule } from './trm/trm.module';
 import { MedicineCategory } from './medicine-categories/entities/medicine-category.entity';
 import { MedicineCategoryModule } from './medicine-categories/medicine-category.module';
 import { InvoiceDetails } from './invoice/entities/invoice-details.entity';
+import { PatientOpdmedicine } from './opd/entities/opd-medicine.entity';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { InvoiceDetails } from './invoice/entities/invoice-details.entity';
           Invoices,
           PatientIpdDiagnosis,
           PatientIpdmedicine,
+          PatientOpdmedicine,
           InvoiceDetails,
           Invoices,
         ],

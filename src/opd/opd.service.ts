@@ -4,12 +4,16 @@ import { UpdateOpdDto } from './dto/update-opd.dto';
 import { Opd } from './entities/opd.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
+import { MedicineDTO } from './dto/medicine.dto';
+import { PatientOpdmedicine } from './entities/opd-medicine.entity';
 
 @Injectable()
 export class OpdService {
   constructor(
     @InjectRepository(Opd)
     private readonly repo: Repository<Opd>,
+    @InjectRepository(PatientOpdmedicine)
+    private readonly medicineRepo: Repository<PatientOpdmedicine>,
     private readonly connection: Connection,
   ) {}
 
@@ -34,6 +38,19 @@ export class OpdService {
     opd.is_active = data.is_active;
 
     return await this.repo.save(opd);
+  }
+
+  async store_medicine(id, data: MedicineDTO) {
+    const medicine = new PatientOpdmedicine();
+    medicine.patient_opd_id = id;
+    medicine.medicine_category = data.medicine_category;
+    medicine.medicine_id = data.medicine_id;
+    medicine.quantity = data.quantity;
+    medicine.dosage = data.dosage;
+    medicine.instruction = data.instruction;
+    medicine.created_by = data.created_by;
+    medicine.report_date = data.report_date;
+    return await this.medicineRepo.save(medicine);
   }
 
   async getById(id) {
@@ -61,6 +78,22 @@ export class OpdService {
       .getRawOne();
 
     return queryResult;
+  }
+
+  async get_medicine_by_opd(opd_id) {
+    const res = await this.connection
+      .createQueryBuilder()
+      .select('m.*')
+      .addSelect('mc.category_name', 'category_name')
+      .addSelect('md.name', 'medicine_name')
+      .addSelect('m.report_date', 'report_date')
+      .from('patients_opd_medicine', 'm')
+      .leftJoin('medicines', 'md', 'md.id = m.medicine_id')
+      .leftJoin('medicine_categories', 'mc', 'mc.id = md.medicine_category_id')
+      .where('m.patient_opd_id = :id', { id: opd_id })
+      .getRawMany();
+
+    return res;
   }
 
   async update(id, data: UpdateOpdDto) {
