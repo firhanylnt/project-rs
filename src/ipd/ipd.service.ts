@@ -62,7 +62,10 @@ export class IpdService {
     console.log(data);
     const medicine = new PatientIpdmedicine();
     medicine.patient_ipd_id = id;
-    medicine.description = data.description;
+    medicine.medicine_category = data.medicine_category;
+    medicine.medicine_id = data.medicine_id;
+    medicine.dosage = data.dosage;
+    medicine.instruction = data.instruction;
     medicine.created_by = data.created_by;
     medicine.report_date = data.report_date;
     return await this.medicineRepo.save(medicine);
@@ -87,10 +90,13 @@ export class IpdService {
   async get_medicine_by_ipd(ipd_id) {
     const res = await this.connection
       .createQueryBuilder()
-      .select('m.id', 'id')
-      .addSelect('m.description', 'description')
+      .select('m.*')
+      .addSelect('mc.category_name', 'category_name')
+      .addSelect('md.name', 'medicine_name')
       .addSelect('m.report_date', 'report_date')
       .from('patients_ipd_medicine', 'm')
+      .leftJoin('medicines', 'md', 'md.id = m.medicine_id')
+      .leftJoin('medicine_categories', 'mc', 'mc.id = md.medicine_category_id')
       .where('m.patient_ipd_id = :id', { id: ipd_id })
       .getRawMany();
 

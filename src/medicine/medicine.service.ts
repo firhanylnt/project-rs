@@ -19,7 +19,7 @@ export class MedicineService {
       from medicines as m
       left join medicine_categories as mc on m.medicine_category_id = mc.id
       order by m.id desc
-    `)
+    `);
   }
 
   async store(data: CreateMedicineDto) {
@@ -42,6 +42,18 @@ export class MedicineService {
       .where('m.id = :id', { id: id })
       .limit(1)
       .getRawOne();
+
+    return queryResult;
+  }
+
+  async getByCategory(id) {
+    const queryResult = await this.connection2
+      .createQueryBuilder()
+      .select('m.*')
+      .from('medicines', 'm')
+      .leftJoin('medicine_categories', 'mc', 'm.medicine_category_id = mc.id')
+      .where('mc.id = :id', { id: id })
+      .getRawMany();
 
     return queryResult;
   }

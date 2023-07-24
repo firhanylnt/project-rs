@@ -18,7 +18,16 @@ export class PatientIpdmedicine {
   patient_ipd_id: string;
 
   @Column()
-  description: string;
+  medicine_category: number;
+
+  @Column()
+  medicine_id: number;
+
+  @Column()
+  dosage: string;
+
+  @Column()
+  instruction: string;
 
   @Column()
   report_date: string;

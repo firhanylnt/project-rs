@@ -30,6 +30,11 @@ export class MedicineController {
     return this.medicineService.getById(id);
   }
 
+  @Get('category/:id')
+  findByCategory(@Param('id') id: string) {
+    return this.medicineService.getByCategory(id);
+  }
+
   @Post(':id')
   update(
     @Param('id') id: string,
