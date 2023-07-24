@@ -18,6 +18,7 @@ export class MedicineService {
 
   async store(data: CreateMedicineDto) {
     const src = new Medicine();
+    src.medicine_category_id = data.medicine_category_id;
     src.name = data.name;
     src.brand = data.brand;
     src.stock = data.stock;
@@ -35,6 +36,7 @@ export class MedicineService {
 
   async update(id, data: UpdateMedicineDto) {
     const src = {
+      medicine_category_id: data.medicine_category_id,
       name: data.name,
       brand: data.brand,
       stock: data.stock,

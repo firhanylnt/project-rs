@@ -14,6 +14,9 @@ export class Medicine {
   id: number;
 
   @Column()
+  medicine_category_id: number;
+
+  @Column()
   name: string;
 
   @Column()
