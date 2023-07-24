@@ -45,6 +45,8 @@ import { Invoices } from './invoice/entities/invoices.entity';
 import { PatientIpdDiagnosis } from './ipd/entities/ipd-diagnosis.entity';
 import { PatientIpdmedicine } from './ipd/entities/ipd-medicine.entity';
 import { TrmModule } from './trm/trm.module';
+import { MedicineCategory } from './medicine-categories/entities/medicine-category.entity';
+import { MedicineCategoryModule } from './medicine-categories/medicine-category.module';
 
 @Module({
   imports: [
@@ -72,6 +74,7 @@ import { TrmModule } from './trm/trm.module';
           Receptionist,
           Pharmacist,
           Nurses,
+          MedicineCategory,
           Medicine,
           Assets,
           BloodBank,
@@ -97,6 +100,7 @@ import { TrmModule } from './trm/trm.module';
     ReceptionistsModule,
     RoomtypeModule,
     RoomModule,
+    MedicineCategoryModule,
     MedicineModule,
     BloodsModule,
     IpdModule,
