@@ -21,19 +21,19 @@ export class Invoices {
   patient_id: string;
 
   @Column()
-  billing_id: number;
-
-  @Column({ type: 'numeric', precision: 10, scale: 2 })
-  amount_paid: number;
-
-  @Column({ type: 'numeric', precision: 10, scale: 2 })
-  total_amount: number;
+  type: string;
 
   @Column()
-  payment_date: Date;
+  invoice_date: Date;
+
+  @Column()
+  payment_method: string;
 
   @Column()
   status: boolean;
+
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  total_amount: number;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;

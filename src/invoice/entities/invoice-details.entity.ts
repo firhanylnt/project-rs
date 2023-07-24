@@ -7,14 +7,14 @@ import {
 } from 'typeorm';
 
 @Entity({
-  name: 'billing_details',
+  name: 'invoice_details',
 })
-export class BillingDetails {
+export class InvoiceDetails {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  billing_id: number;
+  invoice_id: number;
 
   @Column()
   item_name: string;

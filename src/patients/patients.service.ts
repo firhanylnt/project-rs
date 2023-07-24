@@ -38,7 +38,7 @@ export class PatientsService {
       where: { id: id },
     });
 
-    return doc
+    return doc;
   }
 
   async update(id, data: UpdatePatientDto) {
