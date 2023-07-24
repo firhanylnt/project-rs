@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { UpdateMedicineDto } from './dto/update-medicine.dto';
 import { Medicine } from './entities/medicine.entity';
@@ -10,10 +10,16 @@ export class MedicineService {
   constructor(
     @InjectRepository(Medicine)
     private readonly repo: Repository<Medicine>,
+    private readonly connection2: Connection,
   ) {}
 
   async getAll() {
-    return this.repo.find();
+    return this.connection2.query(`
+      select m.*, mc.category_name as medicine_category_name
+      from medicines as m
+      left join medicine_categories as mc on m.medicine_category_id = mc.id
+      order by m.id desc
+    `)
   }
 
   async store(data: CreateMedicineDto) {
@@ -27,11 +33,17 @@ export class MedicineService {
   }
 
   async getById(id) {
-    const src = await this.repo.findOne({
-      where: { id: id },
-    });
+    const queryResult = await this.connection2
+      .createQueryBuilder()
+      .select('m.*')
+      .addSelect('mc.category_name', 'medicine_category_name')
+      .from('medicines', 'm')
+      .leftJoin('medicine_categories', 'mc', 'm.medicine_category_id = mc.id')
+      .where('m.id = :id', { id: id })
+      .limit(1)
+      .getRawOne();
 
-    return src;
+    return queryResult;
   }
 
   async update(id, data: UpdateMedicineDto) {
