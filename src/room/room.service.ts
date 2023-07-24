@@ -14,12 +14,10 @@ export class RoomService {
   ) {}
 
   async getAll(roomType = null) {
-    let whereQuery = ''
-    if (roomType != null) whereQuery = `where rt.room_type = '${roomType}'`
     return this.connection2.query(`
-      select r.id, r.room_number as number, rt.room_type as type, r.slot from rooms as r
-      inner join room_types as rt on r.room_type_id = rt.id
-      ${whereQuery}
+      select r.id, r.room_number as number, rt.room_type as type, r.slot, r.price from rooms as r
+      left join room_types as rt on r.room_type_id = rt.id
+      ${roomType !== null ? `where rt.room_type = '${roomType}'` : ``}
     `);
   }
 
@@ -29,6 +27,7 @@ export class RoomService {
     room.room_type_id = data.room_type_id
     room.room_number = data.room_number
     room.slot = data.slot
+    room.price = data.price
 
     return await this.repo.save(room);
   }
@@ -39,10 +38,11 @@ export class RoomService {
     .select('r.id', 'id')
     .addSelect('r.room_number', 'number')
     .addSelect('r.slot', 'slot')
+    .addSelect('r.price', 'price')
     .addSelect('rt.room_type', 'type')
     .addSelect('rt.id', 'room_type_id')
     .from('rooms', 'r')
-    .innerJoin('room_types', 'rt', 'r.room_type_id = rt.id')
+    .leftJoin('room_types', 'rt', 'r.room_type_id = rt.id')
     .where('r.id = :id', { id: id }) 
     .limit(1)
     .getRawOne();
@@ -55,6 +55,7 @@ export class RoomService {
       room_type_id: data.room_type_id,
       room_number: data.room_number,
       slot: data.slot,
+      price: data.price,
       updated_at: new Date()
     };
 

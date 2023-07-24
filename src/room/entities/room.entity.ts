@@ -22,6 +22,9 @@ export class Room {
   @Column()
   slot: number;
 
+  @Column()
+  price: number;
+
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;
 

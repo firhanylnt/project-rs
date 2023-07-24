@@ -46,6 +46,7 @@ import { MedicineCategory } from './medicine-categories/entities/medicine-catego
 import { MedicineCategoryModule } from './medicine-categories/medicine-category.module';
 import { InvoiceDetails } from './invoice/entities/invoice-details.entity';
 import { PatientOpdmedicine } from './opd/entities/opd-medicine.entity';
+import { IpdRoom } from './ipd/entities/ipd-rooms.entity';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { PatientOpdmedicine } from './opd/entities/opd-medicine.entity';
           PatientOpdmedicine,
           InvoiceDetails,
           Invoices,
+          IpdRoom,
         ],
         synchronize: false,
       }),

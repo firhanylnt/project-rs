@@ -59,6 +59,15 @@ export class AppointmentsService {
   }
 
   async store(data: CreateAppointmentDto) {
+    // validasi jika email sudah terdaftar atau belum
+    // jika belum terdaftar langsung insert ke table users dan create patient baru dan lanjut create appointment
+    // password user pake dob tapi hapus stripnya jadi cuma angka
+    // jika sudah terdaftar, langsung buat appointment
+
+    // tambahkan dob, first name , last name, dan address di landing page appointment
+    // table appointments ditambahkan user_id
+    // patient_name diambil dari first_name dan last_name patient
+
     const appo = new Appointments();
     appo.id = this.generateID(10);
     appo.doctor_id = data.doctor_id;
@@ -76,6 +85,7 @@ export class AppointmentsService {
 
     if (result.is_approved === false) {
       // send wa notification to patient
+      // saat send wa ke user, link login dashboard beserta credentialsnya sekalian dikirim
       this.sendWaMessage(
         appo.phone_number,
         `Dear ${appo.patient_name}, your appointment request has been received. You will receive notification once your appointment is approved.`,

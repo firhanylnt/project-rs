@@ -8,6 +8,7 @@ import { PatientIpdDiagnosis } from './entities/ipd-diagnosis.entity';
 import { PatientIpdmedicine } from './entities/ipd-medicine.entity';
 import { DiagnosisDTO } from './dto/diagnosis.dto';
 import { MedicineDTO } from './dto/medicine.dto';
+import { IpdRoom } from './entities/ipd-rooms.entity';
 
 @Injectable()
 export class IpdService {
@@ -18,13 +19,15 @@ export class IpdService {
     private readonly diagnosisRepo: Repository<PatientIpdDiagnosis>,
     @InjectRepository(PatientIpdmedicine)
     private readonly medicineRepo: Repository<PatientIpdmedicine>,
+    @InjectRepository(IpdRoom)
+    private readonly roomRepo: Repository<IpdRoom>,
     private readonly connection: Connection,
   ) {}
 
   // id, patient, room, date, status
   async getAll() {
     return this.connection.query(`
-      select pi.id, p.first_name as patient, r.room_number as room, pi.admission_date as date, case when pi.is_active then 'Active' else 'Inactive' end as status from patients_ipd as pi
+      select pi.id, p.first_name as patient, p.dob, p.gender, r.room_number as room, pi.admission_date as date, case when pi.is_active then 'Active' else 'Inactive' end as status from patients_ipd as pi
       inner join patients as p on pi.patient_id = p.id
       inner join rooms as r on pi.room_id = r.id
     `);
@@ -44,7 +47,17 @@ export class IpdService {
     ipd.notes = data.notes;
     ipd.is_active = data.is_active;
 
-    return await this.repo.save(ipd);
+    const res = await this.repo.save(ipd);
+
+    if (res && res.id) {
+      const room = new IpdRoom();
+      room.patient_ipd_id = res.id;
+      room.room_id = data.room_id;
+      room.start_date = data.admission_date;
+      room.end_date = null;
+
+      return await this.roomRepo.save(room);
+    }
   }
 
   async store_diagnosis(id, data: DiagnosisDTO) {
@@ -112,6 +125,7 @@ export class IpdService {
       .addSelect('p.first_name', 'patient_first_name')
       .addSelect('p.last_name', 'patient_last_name')
       .addSelect('p.dob', 'patient_dob')
+      .addSelect('p.gender', 'patient_gender')
       .addSelect('i.room_id', 'room_id')
       .addSelect('r.room_number', 'room_number')
       .addSelect('rt.room_type', 'room_type')
@@ -133,7 +147,12 @@ export class IpdService {
       .limit(1)
       .getRawOne();
 
-    return queryResult;
+    const room = await this.roomRepo.find({ where: { patient_ipd_id: id } });
+
+    return {
+      ipd: queryResult,
+      room: room,
+    };
   }
 
   async update(id, data: UpdateIpdDto) {
