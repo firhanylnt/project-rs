@@ -64,6 +64,8 @@ export class AppointmentsService {
     // password user pake dob tapi hapus stripnya jadi cuma angka
     // jika sudah terdaftar, langsung buat appointment
 
+    const user = await this.repo.findOne({ where: { email: data.email } });
+
     // tambahkan dob, first name , last name, dan address di landing page appointment
     // table appointments ditambahkan user_id
     // patient_name diambil dari first_name dan last_name patient
@@ -88,7 +90,7 @@ export class AppointmentsService {
       // saat send wa ke user, link login dashboard beserta credentialsnya sekalian dikirim
       this.sendWaMessage(
         appo.phone_number,
-        `Dear ${appo.patient_name}, your appointment request has been received. You will receive notification once your appointment is approved.`,
+        `Dear ${appo.patient_name}, your appointment request has been received. You will receive notification once your appointment is approved. Below is the detail of your appointment.\n\nBooking ID: ${appo.id}\nEmail: ${appo.email}\nPhone Number: ${appo.phone_number}\nPatient Name: ${appo.patient_name}\nPatient Gender: ${appo.patient_gender}`,
       );
 
       // send wa notification to receptionist
@@ -114,10 +116,14 @@ export class AppointmentsService {
       }, ${appoDate.getUTCDate()} ${
         this.months[appoDate.getUTCMonth()]
       } ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours() < 10 ? '0' + appoDate.getUTCHours() : appoDate.getUTCHours()}:${appoDate.getUTCMinutes() < 10 ? '0' + appoDate.getUTCMinutes() : appoDate.getUTCMinutes()} (UTC)`;
+      // this.sendWaMessage(
+      //   appo.phone_number,
+      //   `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`,
+      // );
       this.sendWaMessage(
         appo.phone_number,
-        `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`,
-      );
+        `Dear ${appo.patient_name}, Your appointment with Dr. ${doctor[0].name} (${specialization[0].name}) is confirmed on *${appoDateStr}*. Please arrive at the hospital at least 30 minutes before scheduled time. If you cannot make the appointment, inform us by calling our phone number 021 12345.`
+      )
 
       // send wa notification to doctor
       this.sendWaMessage(
@@ -231,11 +237,15 @@ export class AppointmentsService {
         }, ${appoDate.getUTCDate()} ${
           this.months[appoDate.getUTCMonth()]
         } ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours() < 10 ? '0' + appoDate.getUTCHours() : appoDate.getUTCHours()}:${appoDate.getUTCMinutes() < 10 ? '0' + appoDate.getUTCMinutes() : appoDate.getUTCMinutes()} (UTC)`;
-          this.sendWaMessage(
+        // this.sendWaMessage(
+        //   appo.phone_number,
+        //   `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`,
+        // );
+        this.sendWaMessage(
           appo.phone_number,
-          `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`,
-        );
-
+          `Dear ${appo.patient_name}, Your appointment with Dr. ${doctor[0].name} (${specialization[0].name}) is confirmed on *${appoDateStr}*. Please arrive at the hospital at least 30 minutes before scheduled time. If you cannot make the appointment, inform us by calling our phone number 021 12345.`
+        )
+  
         // send wa notification to doctor
         this.sendWaMessage(
           doctor[0].phone,
