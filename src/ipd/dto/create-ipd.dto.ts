@@ -9,4 +9,5 @@ export class CreateIpdDto {
   symptoms: string;
   notes: string;
   is_active: boolean;
+  details: [];
 }
