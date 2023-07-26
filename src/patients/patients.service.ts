@@ -16,6 +16,7 @@ export class PatientsService {
   async getAll() {
     return this.connection2.query(`
       select * from patients
+      order by created_at desc
     `);
   }
 

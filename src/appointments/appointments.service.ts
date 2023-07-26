@@ -173,6 +173,7 @@ export class AppointmentsService {
     const queryResult = await this.connection2
       .createQueryBuilder()
       .select('a.id', 'id')
+      .addSelect('a.patient_id', 'patient_id')
       .addSelect('a.appointment_date', 'date')
       .addSelect('s.id', 'specialization_id')
       .addSelect('s.name', 'specialization')
@@ -233,7 +234,7 @@ export class AppointmentsService {
       specialization_id: data.specialization_id,
       email: data.email,
       phone_number: data.phone_number,
-      patient_name: data.first_name + ' ' + data.last_name,
+      patient_name: data.patient_name,
       patient_gender: data.patient_gender,
       appointment_date: data.appointment_date,
       description: data.description,
