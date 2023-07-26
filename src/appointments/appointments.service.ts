@@ -4,8 +4,11 @@ import { Connection, Repository } from 'typeorm';
 import { Appointments } from './entities/appointments.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
-import axios from 'axios';
 import { Receptionist } from 'src/receptionists/entities/receptionist.entity';
+import { Patient } from 'src/patients/entities/patient.entity';
+import { Users } from 'src/users/entities/user.entity';
+import axios from 'axios';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AppointmentsService {
@@ -14,6 +17,10 @@ export class AppointmentsService {
     private readonly receptionistRepo: Repository<Receptionist>,
     @InjectRepository(Appointments)
     private readonly repo: Repository<Appointments>,
+    @InjectRepository(Users)
+    private readonly userRepo: Repository<Users>,
+    @InjectRepository(Patient)
+    private readonly patientRepo: Repository<Patient>,
     private readonly connection2: Connection,
   ) {}
 
@@ -64,19 +71,46 @@ export class AppointmentsService {
     // password user pake dob tapi hapus stripnya jadi cuma angka
     // jika sudah terdaftar, langsung buat appointment
 
-    const user = await this.repo.findOne({ where: { email: data.email } });
-
     // tambahkan dob, first name , last name, dan address di landing page appointment
     // table appointments ditambahkan user_id
     // patient_name diambil dari first_name dan last_name patient
 
+    let user = await this.userRepo.findOne({where: {email: data.email}})
+    let dobWithoutStrip = this.replaceAll(this.formatDateToString(data.dob), '-', '')
+    if (user === undefined) {
+      user = new Users()
+      user.username = this.replaceAll(data.first_name, ' ', '').toLowerCase() + '_' + dobWithoutStrip
+      user.email = data.email.toLowerCase()
+      user.password = bcrypt.hashSync(dobWithoutStrip, bcrypt.genSaltSync());
+      user.status = true
+      user.role = 'Patient'
+      user = await this.userRepo.save(user);
+
+      this.sendWaMessage(data.phone_number, `Dear ${data.first_name} ${data.last_name}, we have create an account for you to monitoring your appointment list. Below is the detail of your account:\n\nEmail: ${user.email}\nPassword: ${dobWithoutStrip}\nYou can login at https://fe-dimedic.dividefense.com/account/login\n\nThank You!`)
+    }
+
+    let patient = await this.patientRepo.findOne({where: {user_id: user.id}})
+    if (patient === undefined) {
+      patient = new Patient()
+      patient.id = this.generateID(6)
+      patient.user_id = user.id
+      patient.first_name = data.first_name
+      patient.last_name = data.last_name
+      patient.gender = data.patient_gender
+      patient.dob = data.dob
+      patient.phone = data.phone_number
+      patient.address = data.address
+      patient = await this.patientRepo.save(patient)
+    }
+
     const appo = new Appointments();
     appo.id = this.generateID(10);
+    appo.patient_id = patient.id
     appo.doctor_id = data.doctor_id;
     appo.specialization_id = data.specialization_id;
     appo.email = data.email;
     appo.phone_number = data.phone_number;
-    appo.patient_name = data.patient_name;
+    appo.patient_name = data.first_name + ' ' + data.last_name;
     appo.patient_gender = data.patient_gender;
     appo.appointment_date = data.appointment_date;
     appo.description = data.description;
@@ -199,7 +233,7 @@ export class AppointmentsService {
       specialization_id: data.specialization_id,
       email: data.email,
       phone_number: data.phone_number,
-      patient_name: data.patient_name,
+      patient_name: data.first_name + ' ' + data.last_name,
       patient_gender: data.patient_gender,
       appointment_date: data.appointment_date,
       description: data.description,
@@ -316,5 +350,20 @@ export class AppointmentsService {
 
     const currentTime = `${hours}:${minutes}:${seconds}`;
     return currentTime;
+  }
+
+  formatDateToString(inputDate) {
+    const dateObject = new Date(inputDate);
+  
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed, so we add 1 and pad with '0' if needed
+    const day = String(dateObject.getDate()).padStart(2, '0');
+  
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  }
+
+  replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
   }
 }

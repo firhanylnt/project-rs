@@ -20,6 +20,9 @@ export class Appointments {
   doctor_id: string;
 
   @Column()
+  patient_id: string;
+
+  @Column()
   email: string;
 
   @Column()
