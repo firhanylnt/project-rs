@@ -47,6 +47,8 @@ import { MedicineCategoryModule } from './medicine-categories/medicine-category.
 import { InvoiceDetails } from './invoice/entities/invoice-details.entity';
 import { PatientOpdmedicine } from './opd/entities/opd-medicine.entity';
 import { IpdRoom } from './ipd/entities/ipd-rooms.entity';
+import { FacilityModule } from './facilities/facility.module';
+import { Facility } from './facilities/entities/facility.entity';
 
 @Module({
   imports: [
@@ -87,6 +89,7 @@ import { IpdRoom } from './ipd/entities/ipd-rooms.entity';
           InvoiceDetails,
           Invoices,
           IpdRoom,
+          Facility,
         ],
         synchronize: false,
       }),
@@ -110,6 +113,7 @@ import { IpdRoom } from './ipd/entities/ipd-rooms.entity';
     AssetsModule,
     OpdModule,
     InvoiceModule,
+    FacilityModule,
     TrmModule,
   ],
   controllers: [AppController],
