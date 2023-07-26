@@ -17,6 +17,9 @@ export class Ipd {
   patient_id: string;
 
   @Column()
+  doctor_id: string;
+
+  @Column()
   room_id: string;
 
   @Column()

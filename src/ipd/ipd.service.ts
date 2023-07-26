@@ -27,14 +27,18 @@ export class IpdService {
   // id, patient, room, date, status
   async getAll() {
     return this.connection.query(`
-      select pi.id, p.first_name as patient, p.dob, p.gender, pi.admission_date as date, case when pi.is_active then 'Active' else 'Inactive' end as status from patients_ipd as pi
+      select pi.id, p.first_name as patient, p.dob, p.gender, pi.admission_date as date, d.id as doctor_id, d.name as doctor_name, r.id as room_id, r.room_number, case when pi.is_active then 'Active' else 'Inactive' end as status from patients_ipd as pi
       inner join patients as p on pi.patient_id = p.id
+      left join doctors as d on pi.doctor_id = d.id
+      left join rooms as r on pi.room_id = r.id
+      order by pi.created_at desc
     `);
   }
 
   async store(data: CreateIpdDto) {
     const ipd = new Ipd();
     ipd.id = this.generateID(6);
+    ipd.doctor_id = data.doctor_id;
     ipd.patient_id = data.patient_id;
     ipd.room_id = data.room_id;
     ipd.blood_pressure = data.blood_pressure;
@@ -120,6 +124,9 @@ export class IpdService {
     const queryResult = await this.connection
       .createQueryBuilder()
       .select('i.id', 'id')
+      .addSelect('r.id', 'room_id')
+      .addSelect('i.doctor_id', 'doctor_id')
+      .addSelect('d.name', 'doctor_name')
       .addSelect('i.patient_id', 'patient_id')
       .addSelect('p.first_name', 'patient_first_name')
       .addSelect('p.last_name', 'patient_last_name')
@@ -137,6 +144,8 @@ export class IpdService {
       .addSelect('i.updated_at', 'updated_at')
       .from('patients_ipd', 'i')
       .innerJoin('patients', 'p', 'i.patient_id = p.id')
+      .leftJoin('doctors', 'd', 'i.doctor_id = d.id')
+      .leftJoin('rooms', 'r', 'i.room_id = r.id')
       .where('i.id = :id', { id: id })
       .limit(1)
       .getRawOne();
@@ -157,6 +166,7 @@ export class IpdService {
 
   async update(id, data) {
     const ipd = {
+      doctor_id: data.doctor_id,
       patient_id: data.patient_id,
       room_id: data.room_id,
       blood_pressure: data.blood_pressure,
@@ -195,7 +205,7 @@ export class IpdService {
         room.patient_ipd_id = id;
         room.room_id = v.room_id;
         room.start_date = v.start_date;
-        room.end_date = null;
+        room.end_date = v.end_date;
 
         await this.roomRepo.save(room);
       }

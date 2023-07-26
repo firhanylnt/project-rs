@@ -1,4 +1,5 @@
 export class CreateIpdDto {
+  doctor_id: string;
   patient_id: string;
   room_id: string;
   blood_pressure: string;

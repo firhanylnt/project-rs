@@ -66,15 +66,6 @@ export class AppointmentsService {
   }
 
   async store(data: CreateAppointmentDto) {
-    // validasi jika email sudah terdaftar atau belum
-    // jika belum terdaftar langsung insert ke table users dan create patient baru dan lanjut create appointment
-    // password user pake dob tapi hapus stripnya jadi cuma angka
-    // jika sudah terdaftar, langsung buat appointment
-
-    // tambahkan dob, first name , last name, dan address di landing page appointment
-    // table appointments ditambahkan user_id
-    // patient_name diambil dari first_name dan last_name patient
-
     let user = await this.userRepo.findOne({where: {email: data.email}})
     let dobWithoutStrip = this.replaceAll(this.formatDateToString(data.dob), '-', '')
     if (user === undefined) {
@@ -150,10 +141,6 @@ export class AppointmentsService {
       }, ${appoDate.getUTCDate()} ${
         this.months[appoDate.getUTCMonth()]
       } ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours() < 10 ? '0' + appoDate.getUTCHours() : appoDate.getUTCHours()}:${appoDate.getUTCMinutes() < 10 ? '0' + appoDate.getUTCMinutes() : appoDate.getUTCMinutes()} (UTC)`;
-      // this.sendWaMessage(
-      //   appo.phone_number,
-      //   `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`,
-      // );
       this.sendWaMessage(
         appo.phone_number,
         `Dear ${appo.patient_name}, Your appointment with Dr. ${doctor[0].name} (${specialization[0].name}) is confirmed on *${appoDateStr}*. Please arrive at the hospital at least 30 minutes before scheduled time. If you cannot make the appointment, inform us by calling our phone number 021 12345.`
@@ -272,10 +259,6 @@ export class AppointmentsService {
         }, ${appoDate.getUTCDate()} ${
           this.months[appoDate.getUTCMonth()]
         } ${appoDate.getUTCFullYear()} ${appoDate.getUTCHours() < 10 ? '0' + appoDate.getUTCHours() : appoDate.getUTCHours()}:${appoDate.getUTCMinutes() < 10 ? '0' + appoDate.getUTCMinutes() : appoDate.getUTCMinutes()} (UTC)`;
-        // this.sendWaMessage(
-        //   appo.phone_number,
-        //   `Dear ${appo.patient_name}, your appointment with ${doctor[0].name} (${specialization[0].name}) confirmed for *${appoDateStr}*. Please visit the hospital 30 minutes before the scheduled time.`,
-        // );
         this.sendWaMessage(
           appo.phone_number,
           `Dear ${appo.patient_name}, Your appointment with Dr. ${doctor[0].name} (${specialization[0].name}) is confirmed on *${appoDateStr}*. Please arrive at the hospital at least 30 minutes before scheduled time. If you cannot make the appointment, inform us by calling our phone number 021 12345.`
