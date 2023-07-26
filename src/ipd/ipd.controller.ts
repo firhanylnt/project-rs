@@ -42,6 +42,16 @@ export class IpdController {
     return this.ipdService.getById(id);
   }
 
+  @Get('detail/:id')
+  get_detail(@Param('id') id: string) {
+    return this.ipdService.get_detail(id);
+  }
+
+  @Get('patient/:id')
+  findByUser(@Param('id') id: string) {
+    return this.ipdService.getByUser(id);
+  }
+
   @Get('diagnosis/:id')
   get_diagnosis(@Param('id') id: string) {
     return this.ipdService.get_diagnosis_by_ipd(id);
