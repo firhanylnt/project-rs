@@ -27,9 +27,8 @@ export class IpdService {
   // id, patient, room, date, status
   async getAll() {
     return this.connection.query(`
-      select pi.id, p.first_name as patient, p.dob, p.gender, r.room_number as room, pi.admission_date as date, case when pi.is_active then 'Active' else 'Inactive' end as status from patients_ipd as pi
+      select pi.id, p.first_name as patient, p.dob, p.gender, pi.admission_date as date, case when pi.is_active then 'Active' else 'Inactive' end as status from patients_ipd as pi
       inner join patients as p on pi.patient_id = p.id
-      inner join rooms as r on pi.room_id = r.id
     `);
   }
 
@@ -126,9 +125,6 @@ export class IpdService {
       .addSelect('p.last_name', 'patient_last_name')
       .addSelect('p.dob', 'patient_dob')
       .addSelect('p.gender', 'patient_gender')
-      .addSelect('i.room_id', 'room_id')
-      .addSelect('r.room_number', 'room_number')
-      .addSelect('rt.room_type', 'room_type')
       .addSelect('i.blood_pressure', 'blood_pressure')
       .addSelect('i.height', 'height')
       .addSelect('i.weight', 'weight')
@@ -141,13 +137,17 @@ export class IpdService {
       .addSelect('i.updated_at', 'updated_at')
       .from('patients_ipd', 'i')
       .innerJoin('patients', 'p', 'i.patient_id = p.id')
-      .innerJoin('rooms', 'r', 'i.room_id = r.id')
-      .innerJoin('room_types', 'rt', 'r.room_type_id = rt.id')
       .where('i.id = :id', { id: id })
       .limit(1)
       .getRawOne();
 
-    const room = await this.roomRepo.find({ where: { patient_ipd_id: id } });
+    // const room = await this.roomRepo.find({ where: { patient_ipd_id: id } });
+    const room = await this.connection.query(`
+      select ir.patient_ipd_id, ir.room_id, ir.start_date, ir.end_date, r.room_type_id
+      from ipd_rooms ir
+      left join rooms r on ir.room_id = r.id
+      where ir.patient_ipd_id = '${id}'
+    `);
 
     return {
       ipd: queryResult,
@@ -155,7 +155,7 @@ export class IpdService {
     };
   }
 
-  async update(id, data: UpdateIpdDto) {
+  async update(id, data) {
     const ipd = {
       patient_id: data.patient_id,
       room_id: data.room_id,
@@ -171,6 +171,35 @@ export class IpdService {
     };
 
     await this.repo.update(id, ipd);
+
+    data.details.map(async (v) => {
+      console.log(v);
+      if (v.room_type.type !== undefined) {
+        const exist = await this.roomRepo.findOne({
+          where: {
+            patient_ipd_id: id,
+            room_id: v.room_id.id,
+          },
+        });
+
+        console.log(exist);
+
+        if (exist) {
+          const arr = {
+            end_date: v.end_date,
+          };
+          await this.roomRepo.update(exist.id, arr);
+        }
+      } else {
+        const room = new IpdRoom();
+        room.patient_ipd_id = id;
+        room.room_id = v.room_id;
+        room.start_date = v.start_date;
+        room.end_date = null;
+
+        await this.roomRepo.save(room);
+      }
+    });
 
     return await this.repo.findOne({
       where: { id: id },
