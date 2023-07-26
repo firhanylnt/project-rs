@@ -19,7 +19,7 @@ export class OpdService {
 
   async getAll() {
     return this.connection.query(`
-      select po.id, p.first_name as patient, po.admission_date as date, case when po.is_active then 'Active' else 'Inactive' end as status from patients_opd as po
+      select po.id, p.first_name as patient, p.gender, p.dob, po.admission_date as date, case when po.is_active then 'Active' else 'Inactive' end as status from patients_opd as po
       inner join patients as p on po.patient_id = p.id
     `);
   }
@@ -94,6 +94,24 @@ export class OpdService {
       .getRawMany();
 
     return res;
+  }
+
+  async get_detail(ids) {
+    const detail = await this.repo.findOne({ where: { id: ids } });
+    const medicine = await this.connection.query(`
+      select m.name, m.price, pom.quantity
+      from medicines m
+      join patients_opd_medicine pom on pom.medicine_id = m.id
+      where pom.patient_opd_id = '${ids}'
+    `);
+    return {
+      detail: detail,
+      medicine: medicine,
+    };
+  }
+
+  async getByUser(id) {
+    return await this.repo.find({ where: { patient_id: id, is_active: true } });
   }
 
   async update(id, data: UpdateOpdDto) {

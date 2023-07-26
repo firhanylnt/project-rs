@@ -164,6 +164,33 @@ export class IpdService {
     };
   }
 
+  async getByUser(id) {
+    return await this.repo.find({ where: { patient_id: id, is_active: true } });
+  }
+
+  async get_detail(ids) {
+    const detail = await this.repo.findOne({ where: { id: ids } });
+    const room = await this.connection.query(`
+      select rt.room_type as name, r.price, (ir.end_date::date - ir.start_date::date) as quantity
+      from rooms r
+      join room_types rt on rt.id = r.room_type_id
+      join ipd_rooms ir on r.id = ir.room_id
+      join patients_ipd pi on pi.id = ir.patient_ipd_id
+      where ir.patient_ipd_id = '${ids}'
+    `);
+    const medicine = await this.connection.query(`
+      select m.name, m.price, pim.quantity
+      from medicines m
+      join patients_ipd_medicine pim on pim.medicine_id = m.id
+      where pim.patient_ipd_id = '${ids}'
+    `);
+    return {
+      detail: detail,
+      facility: room,
+      medicine: medicine,
+    };
+  }
+
   async update(id, data) {
     const ipd = {
       doctor_id: data.doctor_id,
