@@ -8,11 +8,11 @@ export class TrmService {
   constructor(private readonly connection: Connection) {}
   async findAll() {
     return await this.connection.query(`
-      select date, type, symptoms, payment_method, blood_pressure, weight, height from (
-        select admission_date date, 'OPD' as type, symptoms, payment_method, blood_pressure, weight, height
+      select id, date, type, symptoms, payment_method, blood_pressure, weight, height from (
+        select id, admission_date date, 'OPD' as type, symptoms, payment_method, blood_pressure, weight, height
         from patients_opd
         union all
-        select admission_date date, 'IPD' as type, symptoms, payment_method, blood_pressure, weight, height
+        select id, admission_date date, 'IPD' as type, symptoms, payment_method, blood_pressure, weight, height
         from patients_ipd
       )x
     `);
@@ -20,13 +20,13 @@ export class TrmService {
 
   async findByUser(id) {
     return await this.connection.query(`
-      select date, type, symptoms, payment_method, blood_pressure, weight, height from (
-        select po.admission_date date, 'OPD' as type, po.symptoms, po.payment_method, po.blood_pressure, po.weight, po.height
+      select id, date, type, symptoms, payment_method, blood_pressure, weight, height from (
+        select id, po.admission_date date, 'OPD' as type, po.symptoms, po.payment_method, po.blood_pressure, po.weight, po.height
         from patients_opd po
         join patients p on p.id = po.patient_id
         where p.user_id = ${id}
         union all
-        select pi.admission_date date, 'IPD' as type, pi.symptoms, pi.payment_method, pi.blood_pressure, pi.weight, pi.height
+        select id, pi.admission_date date, 'IPD' as type, pi.symptoms, pi.payment_method, pi.blood_pressure, pi.weight, pi.height
         from patients_ipd pi
         join patients p on p.id = pi.patient_id
         where p.user_id = ${id}
