@@ -53,6 +53,8 @@ import { Facility } from './facilities/entities/facility.entity';
 import { RoleModuleModul } from './role-modules/role-module.module';
 import { RoleModule } from './role-modules/entities/role-module.entity';
 import { ModuleModule } from './modules/module.module';
+import { Hospital } from './hospitals/entities/hospital.entity';
+import { HospitalModule } from './hospitals/module.module';
 
 @Module({
   imports: [
@@ -95,7 +97,8 @@ import { ModuleModule } from './modules/module.module';
           IpdRoom,
           Facility,
           ModuleEntity,
-          RoleModule
+          RoleModule,
+          Hospital,
         ],
         synchronize: false,
       }),
@@ -122,7 +125,8 @@ import { ModuleModule } from './modules/module.module';
     FacilityModule,
     TrmModule,
     ModuleModule,
-    RoleModuleModul
+    RoleModuleModul,
+    HospitalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

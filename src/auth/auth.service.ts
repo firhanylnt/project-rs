@@ -84,9 +84,9 @@ export class AuthService {
           .createQueryBuilder('rm')
           .select([
             'm.name AS module_name',
-            'm.icon',
-            'm.url_path',
-            'm.is_active',
+            'm.icon as icon',
+            'm.url_path as url_path',
+            'm.is_active as is_active',
             'rm.role as role',
             'rm.is_visible as is_visible',
             'rm.is_create as is_create',
