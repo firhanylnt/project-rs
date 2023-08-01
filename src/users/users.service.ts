@@ -23,6 +23,7 @@ export class UsersService {
   async store(data: CreateUserDto) {
     const password = bcrypt.hashSync(data.password, bcrypt.genSaltSync());
     const src = new Users();
+    src.hospital_id = data.hospital_id;
     src.email = data.email;
     src.password = password;
     src.role = data.role;
@@ -43,6 +44,7 @@ export class UsersService {
     let src = null;
     if (data.password === null || data.password === '') {
       src = {
+        hospital_id: data.hospital_id,
         email: data.email,
         username: data.username,
         role: data.role,
@@ -51,6 +53,7 @@ export class UsersService {
     } else {
       const password = bcrypt.hashSync(data.password, bcrypt.genSaltSync());
       src = {
+        hospital_id: data.hospital_id,
         email: data.email,
         username: data.username,
         role: data.role,

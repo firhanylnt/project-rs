@@ -14,6 +14,9 @@ export class Users {
   id: number;
 
   @Column()
+  hospital_id: number;
+
+  @Column()
   username: string;
 
   @Column()
