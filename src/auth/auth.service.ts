@@ -4,10 +4,11 @@ import { UpdateAuthDto } from './dto/update-auth.dto';
 import { readFileSync, writeFileSync } from 'fs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Connection, Repository, getConnection } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { Patient } from 'src/patients/entities/patient.entity';
+import { RoleModule } from 'src/role-modules/entities/role-module.entity';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
     private readonly repoPatient: Repository<Patient>,
     @InjectRepository(Users)
     private readonly repo: Repository<Users>,
+    private readonly connection: Connection,
   ) {}
 
   async register(data: RegisterAuthDto): Promise<object> {
@@ -77,6 +79,31 @@ export class AuthService {
       return res;
     } else {
       if (await bcrypt.compare(data.password, user.password)) {
+        const queryBuilder = getConnection()
+          .getRepository(RoleModule)
+          .createQueryBuilder('rm')
+          .select([
+            'm.name AS module_name',
+            'm.icon',
+            'm.url_path',
+            'm.is_active',
+            'rm.role as role',
+            'rm.is_visible as is_visible',
+            'rm.is_create as is_create',
+            'rm.is_read as is_read',
+            'rm.is_edit as is_edit',
+            'rm.is_delete as is_delete',
+          ])
+          .innerJoin('modules', 'm', 'rm.module_id = m.id')
+          .where('rm.role = :role', { role: user.role });
+
+        if (user.role !== 'Super Admin') {
+          queryBuilder.andWhere('rm.hospital_id = :hospitalId', { hospitalId: user.hospital_id });
+        }
+
+        const modules = await queryBuilder.getRawMany();
+        
+        user['modules'] = modules
         res.data = user;
         return res;
       } else {

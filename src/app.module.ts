@@ -24,6 +24,7 @@ import { Patient } from './patients/entities/patient.entity';
 import { Roomtype } from './roomtype/entities/roomtype.entity';
 import { Room } from './room/entities/room.entity';
 import { Ipd } from './ipd/entities/ipd.entity';
+import { Module as ModuleEntity } from './modules/entities/module.entity';
 import { Appointment } from './appointment/entities/appointment.entity';
 import { AssetsModule } from './assets/assets.module';
 import { Receptionist } from './receptionists/entities/receptionist.entity';
@@ -49,6 +50,9 @@ import { PatientOpdmedicine } from './opd/entities/opd-medicine.entity';
 import { IpdRoom } from './ipd/entities/ipd-rooms.entity';
 import { FacilityModule } from './facilities/facility.module';
 import { Facility } from './facilities/entities/facility.entity';
+import { RoleModuleModul } from './role-modules/role-module.module';
+import { RoleModule } from './role-modules/entities/role-module.entity';
+import { ModuleModule } from './modules/module.module';
 
 @Module({
   imports: [
@@ -90,6 +94,8 @@ import { Facility } from './facilities/entities/facility.entity';
           Invoices,
           IpdRoom,
           Facility,
+          ModuleEntity,
+          RoleModule
         ],
         synchronize: false,
       }),
@@ -115,6 +121,8 @@ import { Facility } from './facilities/entities/facility.entity';
     InvoiceModule,
     FacilityModule,
     TrmModule,
+    ModuleModule,
+    RoleModuleModul
   ],
   controllers: [AppController],
   providers: [AppService],
