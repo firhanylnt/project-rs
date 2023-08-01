@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { Hospital } from './entities/hospital.entity';
 import { CreateHospitalDto } from './dto/create-hospital.dto';
 import { UpdateHospitalDto } from './dto/update-hospital.dto';
@@ -10,6 +10,7 @@ export class HospitalService {
   constructor(
     @InjectRepository(Hospital)
     private readonly repo: Repository<Hospital>,
+    private readonly connection: Connection
   ) {}
 
   async getAll() {
@@ -28,6 +29,15 @@ export class HospitalService {
     const src = await this.repo.findOne({
       where: { id: id },
     });
+
+    if (src !== undefined) {
+      const modulesId = await this.connection.query(`
+        select module_id from hospitals_modules
+        where hospital_id = ${id}
+      `)
+
+      src['modules_id'] = modulesId.map(item => item.module_id);
+    }
 
     return src;
   }

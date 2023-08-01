@@ -55,6 +55,8 @@ import { RoleModule } from './role-modules/entities/role-module.entity';
 import { ModuleModule } from './modules/module.module';
 import { Hospital } from './hospitals/entities/hospital.entity';
 import { HospitalModule } from './hospitals/module.module';
+import { HospitalModuleModul } from './hospital-modules/hospital-module.module';
+import { HospitalModuleEntity } from './hospital-modules/entities/hospital-module.entity';
 
 @Module({
   imports: [
@@ -99,6 +101,7 @@ import { HospitalModule } from './hospitals/module.module';
           ModuleEntity,
           RoleModule,
           Hospital,
+          HospitalModuleEntity,
         ],
         synchronize: false,
       }),
@@ -127,6 +130,7 @@ import { HospitalModule } from './hospitals/module.module';
     ModuleModule,
     RoleModuleModul,
     HospitalModule,
+    HospitalModuleModul,
   ],
   controllers: [AppController],
   providers: [AppService],
