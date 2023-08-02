@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, getConnection } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Users } from './entities/user.entity';
@@ -14,10 +14,30 @@ export class UsersService {
   ) {}
 
   async getAll(filterRole = null) {
-    if (filterRole === null) return this.repo.find();
-    else return this.repo.find({
-      where: {role: filterRole}
-    })
+    const queryBuilder = getConnection()
+    .getRepository(Users)
+    .createQueryBuilder('u')
+    .select([
+      'u.id as id',
+      'u.hospital_id as hospital_id',
+      'u.username as username',
+      'u.email as email',
+      'u.password as password',
+      'u.status as status',
+      'u.role as role',
+      'u.created_at as created_at',
+      'u.updated_at as updated_at',
+      'hospital.name as hospital_name', // Use 'hospital.name' instead of 'h.name'
+    ])
+    .leftJoin('hospitals', 'hospital', 'u.hospital_id = hospital.id')
+
+    if (filterRole !== null && filterRole !== '') {
+      queryBuilder.where('u.role = :role', { role: filterRole })
+    }
+
+    queryBuilder.orderBy('id', 'DESC')
+
+    return await queryBuilder.getRawMany()
   }
 
   async store(data: CreateUserDto) {
@@ -33,11 +53,26 @@ export class UsersService {
   }
 
   async getById(id) {
-    const src = await this.repo.findOne({
-      where: { id: id },
-    });
+    const queryBuilder = await getConnection()
+    .getRepository(Users)
+    .createQueryBuilder('u')
+    .select([
+      'u.id as id',
+      'u.hospital_id as hospital_id',
+      'u.username as username',
+      'u.email as email',
+      'u.password as password',
+      'u.status as status',
+      'u.role as role',
+      'u.created_at as created_at',
+      'u.updated_at as updated_at',
+      'hospital.name as hospital_name', // Use 'hospital.name' instead of 'h.name'
+    ])
+    .leftJoin('hospitals', 'hospital', 'u.hospital_id = hospital.id')
+    .where('u.id = :id', { id: id })
+    .getRawOne()
 
-    return src;
+    return queryBuilder;
   }
 
   async update(id, data: UpdateUserDto) {
