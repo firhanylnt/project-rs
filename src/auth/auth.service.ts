@@ -101,6 +101,8 @@ export class AuthService {
           queryBuilder.andWhere('rm.hospital_id = :hospitalId', { hospitalId: user.hospital_id });
         }
 
+        queryBuilder.orderBy('rm.id', 'ASC'); // Add the ORDER BY clause
+
         const modules = await queryBuilder.getRawMany();
         
         user['modules'] = modules
