@@ -31,12 +31,13 @@ export class HospitalService {
     });
 
     if (src !== undefined) {
-      const modulesId = await this.connection.query(`
-        select module_id from hospitals_modules
+      const modules = await this.connection.query(`
+        select hm.module_id, m.name as module_name from hospitals_modules as hm
+        join modules as m on hm.module_id = m.id
         where hospital_id = ${id}
       `)
 
-      src['modules_id'] = modulesId.map(item => item.module_id);
+      src['modules'] = modules;
     }
 
     return src;
