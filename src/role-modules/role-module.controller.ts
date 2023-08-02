@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { RoleModuleService } from './role-module.service';
 import { CreateRoleModuleDto } from './dto/create-role-module.dto';
@@ -21,8 +22,9 @@ export class RoleModuleController {
   }
 
   @Get()
-  findAll() {
-    return this.service.getAll();
+  findAll(@Query() query: any) {
+    const { hospital_id, role } = query;
+    return this.service.getAll(hospital_id, role);
   }
 
   @Get(':id')

@@ -12,8 +12,19 @@ export class RoleModuleService {
     private readonly repo: Repository<RoleModule>,
   ) {}
 
-  async getAll() {
-    return this.repo.find();
+  async getAll(hospitalId = null, role = null) {
+    // return this.repo.find();
+    const query = this.repo.createQueryBuilder('rm');
+
+    if (hospitalId !== null && hospitalId !== '') {
+      query.andWhere('rm.hospital_id = :hospitalId', { hospitalId });
+    }
+
+    if (role !== null) {
+      query.andWhere('rm.role = :role', { role });
+    }
+
+    return query.getMany();
   }
 
   async store(data: CreateRoleModuleDto) {
