@@ -7,38 +7,23 @@ import {
 } from 'typeorm';
 
 @Entity({
-  name: 'doctors',
+  name: 'doctor_backgrounds',
 })
-export class Doctor {
+export class DoctorBackground {
   @PrimaryColumn()
-  id: string;
+  id: number;
 
   @Column()
-  user_id: number;
+  doctor_id: string;
 
   @Column()
-  specialization_id: number;
+  year: number;
 
   @Column()
-  name: string;
-
-  @Column('date') // Use 'date' type for the 'dob' column representing a date
-  dob: Date;
-
+  education: string;
+  
   @Column()
-  gender: string;
-
-  @Column()
-  phone: string;
-
-  @Column()
-  address: string;
-
-  @Column()
-  json_work_schedule: string;
-
-  @Column()
-  photo_path: string;
+  is_formal: boolean;
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
   created_at: Date;

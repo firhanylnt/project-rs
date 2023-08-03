@@ -5,18 +5,23 @@ import {
   Body,
   Param,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('doctors')
 export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}
 
   @Post()
-  create(@Body() createDoctorDto: CreateDoctorDto) {
-    return this.doctorsService.store(createDoctorDto);
+  @UseInterceptors(FileInterceptor('photo'))
+  create(@Body() dto: CreateDoctorDto, @UploadedFile() photo: any) {
+    dto.photo = photo
+    return this.doctorsService.store(dto);
   }
 
   @Get()
@@ -32,8 +37,10 @@ export class DoctorsController {
   }
 
   @Post(':id')
-  update(@Param('id') id: string, @Body() updateDoctorDto: UpdateDoctorDto) {
-    return this.doctorsService.update(id, updateDoctorDto);
+  @UseInterceptors(FileInterceptor('photo'))
+  update(@Param('id') id: string, @Body() dto: UpdateDoctorDto, @UploadedFile() photo: any) {
+    dto.photo = photo
+    return this.doctorsService.update(id, dto);
   }
 
   @Post('delete/:id')

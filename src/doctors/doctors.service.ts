@@ -4,6 +4,8 @@ import { Connection, Repository } from 'typeorm';
 import { Doctor } from './entities/doctor.entity';
 import { CreateDoctorDto } from './dto/create-doctor.dto';
 import { UpdateDoctorDto } from './dto/update-doctor.dto';
+import { DoctorBackgroundService } from './doctor-backgrounds.service';
+import { MainHelper } from 'src/helpers/main.helper';
 
 @Injectable()
 export class DoctorsService {
@@ -11,6 +13,7 @@ export class DoctorsService {
     @InjectRepository(Doctor)
     private readonly repo: Repository<Doctor>,
     private readonly connection2: Connection,
+    private readonly doctorBackgroundSvc: DoctorBackgroundService  
   ) {}
 
   async getAll(specialization = null) {
@@ -32,6 +35,16 @@ export class DoctorsService {
     doc.dob = data.dob
     doc.gender = data.gender
     doc.phone = data.phone
+    doc.address = data.address
+    doc.json_work_schedule = data.json_work_schedule
+
+    if (data.photo != null) {
+      try {
+        doc.photo_path = await MainHelper.savePhotoAndGetPath(data.photo, 'uploads/doctors');
+      } catch (error) {
+        console.error('error upload photo', error)
+      }  
+    }
 
     return await this.repo.save(doc);
   }
@@ -57,12 +70,24 @@ export class DoctorsService {
     .limit(1)
     .getRawOne();
 
+    queryResult['backgrounds'] = await this.doctorBackgroundSvc.getAll(id)
+
     return queryResult;
   }
 
   async update(id, data: UpdateDoctorDto) {
+    const doctor = await this.repo.findOne({
+      where: { id: id },
+    });
+    if (doctor !== undefined && data.photo != null) {
+      try {
+        await MainHelper.removeFile(doctor.photo_path)
+      } catch (error) {
+        console.error('error when deleting file', error)
+      }
+    }
+
     const doc = {
-      user_id: data.user_id,
       specialization_id: data.specialization_id,
       name: data.name,
       dob: data.dob,
@@ -70,6 +95,10 @@ export class DoctorsService {
       phone: data.phone,
       updated_at: new Date()
     };
+
+    if (data.photo != null) {
+      doc['photo_path'] = await MainHelper.savePhotoAndGetPath(data.photo, 'uploads/doctors')
+    }
 
     await this.repo.update(id, doc);
 
@@ -79,6 +108,17 @@ export class DoctorsService {
   }
 
   async remove(id) {
+    const doctor = await this.repo.findOne({
+      where: { id: id },
+    });
+    if (doctor !== undefined) {
+      try {
+        await MainHelper.removeFile(doctor.photo_path)
+      } catch (error) {
+        console.error('error when deleting file', error)
+      }
+    }
+
     const result = await this.repo.delete({ id: id });
     if (result.affected > 0) return {'message': 'Doctor deleted!'}
     else return {'message': 'Failed to delete Doctor!'}

@@ -5,4 +5,8 @@ export class CreateDoctorDto {
   dob: Date;
   gender: string;
   phone: string;
+
+  address: string;
+  photo: any;
+  json_work_schedule: string;
 }

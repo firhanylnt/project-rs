@@ -57,6 +57,7 @@ import { Hospital } from './hospitals/entities/hospital.entity';
 import { HospitalModule } from './hospitals/module.module';
 import { HospitalModuleModul } from './hospital-modules/hospital-module.module';
 import { HospitalModuleEntity } from './hospital-modules/entities/hospital-module.entity';
+import { DoctorBackground } from './doctors/entities/doctor-background.entity';
 
 @Module({
   imports: [
@@ -102,6 +103,7 @@ import { HospitalModuleEntity } from './hospital-modules/entities/hospital-modul
           RoleModule,
           Hospital,
           HospitalModuleEntity,
+          DoctorBackground,
         ],
         synchronize: false,
       }),
